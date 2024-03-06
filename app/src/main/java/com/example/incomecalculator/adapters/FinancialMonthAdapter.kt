@@ -1,8 +1,9 @@
-package com.example.incomecalculator
+package com.example.incomecalculator.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.incomecalculator.holders.FinancialMonthHolder
 import com.example.incomecalculator.data.FinancialMonth
 import com.example.incomecalculator.databinding.ListFinancialMonthBinding
 

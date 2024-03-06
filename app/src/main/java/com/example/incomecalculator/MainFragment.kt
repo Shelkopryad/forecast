@@ -5,14 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
-import com.example.incomecalculator.data.FinancialMonth
-import com.example.incomecalculator.data.FinancialMonthListViewModel
 import com.example.incomecalculator.databinding.MainFragmentBinding
 import kotlinx.coroutines.launch
 
@@ -36,14 +33,15 @@ class MainFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val financialMonths = DatabaseRepository.get().getLastFinancialMonth()
-                val salary = financialMonths?.monthlySalary
-                val expenseForecast = financialMonths?.expenseForecast
-                val expenseInFact = financialMonths?.expenseInFact
+                DatabaseRepository.get().getLastFinancialMonth().collect { financialMonth ->
+                    val salary = financialMonth?.monthlySalary
+                    val expenseForecast = financialMonth?.expenseForecast
+                    val expenseInFact = financialMonth?.expenseInFact
 
-                binding.salaryTextView.setText("Salary: ${salary ?: 0}")
-                binding.expenseForecastTextView.setText("Expense forecast: ${expenseForecast ?: 0}")
-                binding.expenseInFactTextView.setText("Actual expense: ${expenseInFact ?: 0}")
+                    binding.salaryTextView.setText("Salary: ${salary ?: 0}")
+                    binding.expenseForecastTextView.setText("Expense forecast: ${expenseForecast ?: 0}")
+                    binding.expenseInFactTextView.setText("Actual expense: ${expenseInFact ?: 0}")
+                }
             }
         }
 

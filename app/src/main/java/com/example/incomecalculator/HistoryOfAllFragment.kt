@@ -10,7 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.incomecalculator.data.FinancialMonthListViewModel
+import com.example.incomecalculator.adapters.FinancialMonthAdapter
+import com.example.incomecalculator.view_models.FinancialMonthListViewModel
 import com.example.incomecalculator.databinding.HistoryOfAllBinding
 import kotlinx.coroutines.launch
 
@@ -38,8 +39,9 @@ class HistoryOfAllFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val financialMonths = financialMonthListViewModel.loadFinancialMonths()
-                binding.financialMonthsRecyclerView.adapter = FinancialMonthAdapter(financialMonths)
+                financialMonthListViewModel.financialMonthList.collect { financialMonths ->
+                    binding.financialMonthsRecyclerView.adapter = FinancialMonthAdapter(financialMonths)
+                }
             }
         }
     }

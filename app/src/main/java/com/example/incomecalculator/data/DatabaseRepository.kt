@@ -2,7 +2,7 @@ package com.example.incomecalculator.data
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.Migration
+import kotlinx.coroutines.flow.Flow
 import java.lang.IllegalStateException
 import java.math.BigDecimal
 
@@ -18,10 +18,13 @@ class DatabaseRepository private constructor(context: Context) {
         .fallbackToDestructiveMigration()
         .build()
 
-    suspend fun getFinancialMonths(): List<FinancialMonth> =
+    fun getFinancialMonths(): Flow<List<FinancialMonth>> =
         database.financialMonthDao().getFinancialMonths()
 
-    suspend fun getLastFinancialMonth(): FinancialMonth =
+    suspend fun getLastFinancialMonths(): List<FinancialMonth> =
+        database.financialMonthDao().getLastFinancialMonths()
+
+    fun getLastFinancialMonth(): Flow<FinancialMonth> =
         database.financialMonthDao().getLastFinancialMonth()
 
     suspend fun newFinancialMonth(
@@ -36,6 +39,9 @@ class DatabaseRepository private constructor(context: Context) {
 
     suspend fun getDailyExpansesByFinMonthId(id: Int): List<DailyExpense> =
         database.dailyExpenseDao().getDailyExpensesByFinancialMonth(id)
+
+    suspend fun getCategories(): List<Category> =
+        database.categories().getCategories()
 
     companion object {
         private var INSTANCE: DatabaseRepository? = null

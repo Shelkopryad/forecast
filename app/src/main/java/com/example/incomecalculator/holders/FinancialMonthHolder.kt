@@ -1,12 +1,11 @@
-package com.example.incomecalculator
+package com.example.incomecalculator.holders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.incomecalculator.data.FinancialMonth
-import com.example.incomecalculator.databinding.HistoryOfAllBinding
 import com.example.incomecalculator.databinding.ListFinancialMonthBinding
 
 class FinancialMonthHolder(
-    val binding: ListFinancialMonthBinding
+    private val binding: ListFinancialMonthBinding
 ): RecyclerView.ViewHolder(binding.root) {
     fun bind(financialMonth: FinancialMonth) {
         binding.salaryTextViewList.text = "Earned on ${financialMonth.month}.${financialMonth.year}; ${financialMonth.monthlySalary}"
