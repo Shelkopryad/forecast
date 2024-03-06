@@ -19,7 +19,7 @@ interface FinancialMonthDao {
     fun getLastFinancialMonthFlow(): Flow<FinancialMonth>
 
     @Query("SELECT * FROM financial_months ORDER BY id DESC LIMIT 1")
-    fun getLastFinancialMonth(): FinancialMonth
+    suspend fun getLastFinancialMonth(): FinancialMonth
 
     @Query("SELECT * FROM financial_months WHERE id = (:id)")
     fun getFinancialMonth(id: Int): Flow<FinancialMonth>
