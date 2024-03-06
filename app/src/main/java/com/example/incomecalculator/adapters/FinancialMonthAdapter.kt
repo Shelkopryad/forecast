@@ -13,7 +13,7 @@ class FinancialMonthAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ) : FinancialMonthHolder {
+    ): FinancialMonthHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListFinancialMonthBinding.inflate(inflater, parent, false)
         return FinancialMonthHolder(binding)

@@ -10,8 +10,6 @@ class FinancialMonthListViewModel : ViewModel() {
     val financialMonthList = appRepository.getFinancialMonthsFlow()
 
     init {
-        viewModelScope.launch {
-
-        }
+        viewModelScope.launch {}
     }
 }

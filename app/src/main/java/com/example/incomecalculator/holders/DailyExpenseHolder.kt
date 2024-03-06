@@ -6,7 +6,7 @@ import com.example.incomecalculator.databinding.ListDailyExpensesBinding
 
 class DailyExpenseHolder(
     private val binding: ListDailyExpensesBinding
-): RecyclerView.ViewHolder(binding.root) {
+) : RecyclerView.ViewHolder(binding.root) {
     fun bind(dailyExpense: DailyExpense) {
         binding.dateOfExpenseTextView.text = "Date: ${dailyExpense.date};"
         binding.amountOfExpense.text = "Expense: ${dailyExpense.amount}"

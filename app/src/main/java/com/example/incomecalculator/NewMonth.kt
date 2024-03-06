@@ -65,12 +65,16 @@ class NewMonth : Fragment() {
         currentYear: Int,
     ): BigDecimal {
         val averageExpenseInFact = if (lastMonths.isNotEmpty()) {
-            lastMonths.map { it.expenseInFact }.reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal(lastMonths.size)
+            lastMonths
+                .map { it.expenseInFact }
+                .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal(lastMonths.size)
         } else {
             BigDecimal.ZERO
         }
 
-        val lastYearSameMonth = lastMonths.findLast { it.month == currentMonth && it.year == currentYear - 1 }
+        val lastYearSameMonth =
+            lastMonths.findLast { it.month == currentMonth && it.year == currentYear - 1 }
+
         val forecast = if (lastYearSameMonth != null) {
             (averageExpenseInFact + lastYearSameMonth.expenseInFact) / BigDecimal(2)
         } else {

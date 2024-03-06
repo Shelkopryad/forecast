@@ -25,7 +25,13 @@ interface FinancialMonthDao {
     fun getFinancialMonth(id: Int): Flow<FinancialMonth>
 
     @Query("INSERT INTO financial_months (month, year, monthly_salary, expense_forecast, expense_in_fact) VALUES (:month, :year, :monthlySalary, :expenseForecast, :expenseInFact)")
-    suspend fun newFinancialMonth(month: Int, year: Int, monthlySalary: BigDecimal, expenseForecast: BigDecimal, expenseInFact: BigDecimal)
+    suspend fun newFinancialMonth(
+        month: Int,
+        year: Int,
+        monthlySalary: BigDecimal,
+        expenseForecast: BigDecimal,
+        expenseInFact: BigDecimal
+    )
 
     @Query("UPDATE financial_months SET expense_in_fact = :expenseInFact WHERE id = :id")
     suspend fun updateFinancialMonth(id: Int, expenseInFact: BigDecimal)

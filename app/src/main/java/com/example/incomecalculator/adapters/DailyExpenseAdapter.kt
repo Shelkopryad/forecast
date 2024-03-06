@@ -13,7 +13,7 @@ class DailyExpenseAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ) : DailyExpenseHolder {
+    ): DailyExpenseHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListDailyExpensesBinding.inflate(inflater, parent, false)
         return DailyExpenseHolder(binding)

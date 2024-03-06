@@ -37,8 +37,8 @@ class DatabaseRepository private constructor(context: Context) {
         expenseForecast: BigDecimal,
         expenseInFact: BigDecimal
     ) = database
-            .financialMonthDao()
-            .newFinancialMonth(month, year, monthlySalary, expenseForecast, expenseInFact)
+        .financialMonthDao()
+        .newFinancialMonth(month, year, monthlySalary, expenseForecast, expenseInFact)
 
     suspend fun updateFinancialMonth(
         id: Int,

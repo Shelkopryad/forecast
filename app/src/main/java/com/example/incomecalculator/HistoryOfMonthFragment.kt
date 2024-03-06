@@ -42,8 +42,10 @@ class HistoryOfMonthFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 DatabaseRepository.get().getLastFinancialMonthFlow().collect { financialMonth ->
                     if (financialMonth != null) {
-                        val dailyExpenses = dailyExpenseViewModel.loadDailyExpenses(financialMonth.id)
-                        binding.expensesOfFinancialMonthsRecyclerView.adapter = DailyExpenseAdapter(dailyExpenses)
+                        val dailyExpenses =
+                            dailyExpenseViewModel.loadDailyExpenses(financialMonth.id)
+                        binding.expensesOfFinancialMonthsRecyclerView.adapter =
+                            DailyExpenseAdapter(dailyExpenses)
                     }
                 }
             }

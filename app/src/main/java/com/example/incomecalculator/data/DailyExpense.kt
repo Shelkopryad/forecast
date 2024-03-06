@@ -7,14 +7,16 @@ import androidx.room.PrimaryKey
 import java.math.BigDecimal
 
 
-@Entity(tableName = "daily_expenses", foreignKeys = [
-    ForeignKey(
-        entity = FinancialMonth::class,
-        parentColumns = ["id"],
-        childColumns = ["financial_month_id"],
-        onDelete = ForeignKey.CASCADE
-    )
-])
+@Entity(
+    tableName = "daily_expenses", foreignKeys = [
+        ForeignKey(
+            entity = FinancialMonth::class,
+            parentColumns = ["id"],
+            childColumns = ["financial_month_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class DailyExpense(
     @PrimaryKey(autoGenerate = true)
     val id: Int,

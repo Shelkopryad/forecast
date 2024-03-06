@@ -40,7 +40,8 @@ class HistoryOfAllFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financialMonthListViewModel.financialMonthList.collect { financialMonths ->
-                    binding.financialMonthsRecyclerView.adapter = FinancialMonthAdapter(financialMonths)
+                    binding.financialMonthsRecyclerView.adapter =
+                        FinancialMonthAdapter(financialMonths)
                 }
             }
         }
