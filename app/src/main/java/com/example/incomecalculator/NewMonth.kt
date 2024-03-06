@@ -42,7 +42,7 @@ class NewMonth : Fragment() {
             val salary = BigDecimal(binding.salary.text.toString())
 
             lifecycleScope.launch {
-                val financialMonths = DatabaseRepository.get().getLastFinancialMonths().takeLast(6)
+                val financialMonths = DatabaseRepository.get().getFinancialMonths().takeLast(6)
                 val forecast = getAverageExpense(financialMonths, month, year)
                 println("$month, $year, $salary, $forecast")
                 DatabaseRepository

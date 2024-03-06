@@ -1,23 +1,33 @@
 package com.example.incomecalculator
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
+import com.example.incomecalculator.data.FinancialMonth
 import com.example.incomecalculator.databinding.MainFragmentBinding
+
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 
 class MainFragment : Fragment() {
 
     private var _binding: MainFragmentBinding? = null
 
     private val binding get() = _binding!!
+
+    private var currentFinancialMonth: FinancialMonth? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -31,9 +41,12 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val databaseRepository = DatabaseRepository.get()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                DatabaseRepository.get().getLastFinancialMonth().collect { financialMonth ->
+                databaseRepository.getLastFinancialMonthFlow().collect { financialMonth ->
+                    currentFinancialMonth = financialMonth
                     val salary = financialMonth?.monthlySalary
                     val expenseForecast = financialMonth?.expenseForecast
                     val expenseInFact = financialMonth?.expenseInFact
@@ -57,10 +70,45 @@ class MainFragment : Fragment() {
             findNavController().navigate(R.id.action_MainFragment_to_newMonth)
         }
 
-        binding.addExpenseBtn.setOnClickListener {
-            val expense = binding.expenseInput.text
-            println(expense.toString().toFloat())
+        val options = listOf("Other", "Shop", "Rent", "Services")
+        val adapter = ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_item, options)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.categoriesSelect.adapter = adapter
 
+        binding.categoriesSelect.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = options[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        binding.addExpenseBtn.setOnClickListener {
+            if (binding.expenseInput.text.isNotEmpty()) {
+                lifecycleScope.launch {
+                    val expense = try {
+                        BigDecimal(binding.expenseInput.text.toString())
+                    } catch (e: NumberFormatException) {
+                        BigDecimal.ZERO
+                    }
+                    println("in scope: $expense")
+
+                    DatabaseRepository.get().newDailyExpense(
+                        LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        expense,
+                        currentFinancialMonth!!.id,
+                        binding.categoriesSelect.selectedItem.toString()
+                    )
+
+                    DatabaseRepository.get().updateFinancialMonth(
+                        currentFinancialMonth!!.id,
+                        currentFinancialMonth!!.expenseInFact.minus(expense)
+                    )
+                }
+                binding.expenseInput.setText("")
+            }
         }
     }
 

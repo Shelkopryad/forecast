@@ -49,6 +49,12 @@
             android:text="@string/history_of_of_all_month_btn" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="?android:attr/listDivider" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -62,6 +68,11 @@
             android:ems="10"
             android:inputType="text"
             android:hint="@string/expense_input" />
+
+        <Spinner
+            android:id="@+id/categoriesSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/addExpenseBtn"

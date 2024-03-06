@@ -10,7 +10,6 @@ class DailyExpenseHolder(
     fun bind(dailyExpense: DailyExpense) {
         binding.dateOfExpenseTextView.text = "Date: ${dailyExpense.date};"
         binding.amountOfExpense.text = "Expense: ${dailyExpense.amount}"
-        binding.categoryTextView.text = "Actual: ${dailyExpense.category}"
+        binding.categoryTextView.text = "Category: ${dailyExpense.category}"
     }
-
 }

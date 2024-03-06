@@ -12,5 +12,4 @@ class FinancialMonthHolder(
         binding.forecastTextView.text = "Forecast: ${financialMonth.expenseForecast}"
         binding.actualExpenseTextView.text = "Actual: ${financialMonth.expenseInFact}"
     }
-
 }

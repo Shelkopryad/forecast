@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 
 class FinancialMonthListViewModel : ViewModel() {
     private val appRepository = DatabaseRepository.get()
-    val financialMonthList = appRepository.getFinancialMonths()
+    val financialMonthList = appRepository.getFinancialMonthsFlow()
 
     init {
         viewModelScope.launch {

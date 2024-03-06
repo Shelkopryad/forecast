@@ -18,13 +18,16 @@ class DatabaseRepository private constructor(context: Context) {
         .fallbackToDestructiveMigration()
         .build()
 
-    fun getFinancialMonths(): Flow<List<FinancialMonth>> =
+    fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>> =
+        database.financialMonthDao().getFinancialMonthsFlow()
+
+    suspend fun getFinancialMonths(): List<FinancialMonth> =
         database.financialMonthDao().getFinancialMonths()
 
-    suspend fun getLastFinancialMonths(): List<FinancialMonth> =
-        database.financialMonthDao().getLastFinancialMonths()
+    fun getLastFinancialMonthFlow(): Flow<FinancialMonth> =
+        database.financialMonthDao().getLastFinancialMonthFlow()
 
-    fun getLastFinancialMonth(): Flow<FinancialMonth> =
+    suspend fun getLastFinancialMonth(): FinancialMonth =
         database.financialMonthDao().getLastFinancialMonth()
 
     suspend fun newFinancialMonth(
@@ -37,11 +40,24 @@ class DatabaseRepository private constructor(context: Context) {
             .financialMonthDao()
             .newFinancialMonth(month, year, monthlySalary, expenseForecast, expenseInFact)
 
+    suspend fun updateFinancialMonth(
+        id: Int,
+        expenseInFact: BigDecimal
+    ) = database
+        .financialMonthDao()
+        .updateFinancialMonth(id, expenseInFact)
+
+    suspend fun newDailyExpense(
+        date: String,
+        amount: BigDecimal,
+        financialMonthId: Int,
+        category: String
+    ) = database
+        .dailyExpenseDao()
+        .newDailyExpense(date, amount, financialMonthId, category)
+
     suspend fun getDailyExpansesByFinMonthId(id: Int): List<DailyExpense> =
         database.dailyExpenseDao().getDailyExpensesByFinancialMonth(id)
-
-    suspend fun getCategories(): List<Category> =
-        database.categories().getCategories()
 
     companion object {
         private var INSTANCE: DatabaseRepository? = null
