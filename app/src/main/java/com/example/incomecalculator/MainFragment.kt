@@ -19,12 +19,20 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
 class MainFragment : Fragment() {
 
     private var _binding: MainFragmentBinding? = null
 
     private val binding get() = _binding!!
+
+    private val categories = listOf(
+        "Rent",
+        "Food",
+        "Shop",
+        "Pets",
+        "Services",
+        "Other",
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,9 +73,8 @@ class MainFragment : Fragment() {
             findNavController().navigate(R.id.action_MainFragment_to_newMonth)
         }
 
-        val options = listOf("Other", "Shop", "Rent", "Services")
         val adapter =
-            ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_item, options)
+            ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.categoriesSelect.adapter = adapter
 
@@ -79,7 +86,7 @@ class MainFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    val selectedItem = options[position]
+                    val selectedItem = categories[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
