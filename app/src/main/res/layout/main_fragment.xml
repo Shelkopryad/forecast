@@ -1,86 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/salaryTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/salary_text_view" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/salary_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/expenseForecastTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/expense_forecast_text_view" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/expense_forecast_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/salaryTextView" />
 
     <TextView
         android:id="@+id/expenseInFactTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@string/expense_in_fact_text_view" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/expense_in_fact_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenseForecastTextView" />
+
+    <EditText
+        android:id="@+id/expenseInput"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_weight="1"
+        android:hint="@string/expense_input"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenseInFactTextView" />
+
+    <Spinner
+        android:id="@+id/categoriesSelect"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toEndOf="@id/expenseInput"
+        app:layout_constraintTop_toBottomOf="@+id/expenseInFactTextView" />
+
+    <Button
+        android:id="@+id/addExpenseBtn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/add"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toEndOf="@id/categoriesSelect"
+        app:layout_constraintTop_toBottomOf="@+id/expenseInFactTextView" />
 
     <Button
         android:id="@+id/historyOfMonthBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/history_of_current_month_btn" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/history_of_current_month_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenseInput" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+    <Button
+        android:id="@+id/historyOfAllBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/history_of_of_all_month_btn"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toEndOf="@id/historyOfMonthBtn"
+        app:layout_constraintTop_toBottomOf="@id/expenseInput" />
 
-        <Button
-            android:id="@+id/newFinancialMonthBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/start_next_month_btn" />
-
-        <Button
-            android:id="@+id/historyOfAllBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/history_of_of_all_month_btn" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="?android:attr/listDivider" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/expenseInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="@string/expense_input" />
-
-        <Spinner
-            android:id="@+id/categoriesSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/addExpenseBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/add" />
-    </LinearLayout>
-
-</LinearLayout>
-
+    <Button
+        android:id="@+id/newFinancialMonthBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_next_month_btn"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/historyOfAllBtn" />
+</androidx.constraintlayout.widget.ConstraintLayout>

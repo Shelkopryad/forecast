@@ -13,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.MainFragmentBinding
-
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate

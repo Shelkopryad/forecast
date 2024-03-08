@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:text="Salary"
         app:layout_constraintBottom_toTopOf="@+id/forecastTextView"
         app:layout_constraintEnd_toEndOf="@+id/forecastTextView"
         app:layout_constraintStart_toStartOf="@+id/forecastTextView"
@@ -24,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:text="Forecast"
         app:layout_constraintBottom_toTopOf="@+id/actualExpenseTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/salaryTextViewList" />
@@ -35,7 +33,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:text="Actual"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/forecastTextView"
