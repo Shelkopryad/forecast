@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MainFragment">
+
+    <fragment
+        android:id="@+id/MainFragment"
+        android:name="com.example.incomecalculator.MainFragment"
+        android:label="@string/main_fragment_label"
+        tools:layout="@layout/main_fragment">
+
+        <action
+            android:id="@+id/action_MainFragment_to_HistoryFragment"
+            app:destination="@id/HistoryFragment" />
+
+        <action
+            android:id="@+id/action_MainFragment_to_HistoryOfAllFragment"
+            app:destination="@id/historyOfAllFragment" />
+        <action
+            android:id="@+id/action_MainFragment_to_newMonth"
+            app:destination="@id/newMonth" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/HistoryFragment"
+        android:name="com.example.incomecalculator.HistoryOfMonthFragment"
+        android:label="@string/current_month_history_fragment"
+        tools:layout="@layout/history_of_month">
+
+        <action
+            android:id="@+id/action_HistoryFragment_to_MainFragment"
+            app:destination="@id/MainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyOfAllFragment"
+        android:name="com.example.incomecalculator.HistoryOfAllFragment"
+        android:label="@string/history_fragment"
+        tools:layout="@layout/history_of_all">
+
+        <action
+            android:id="@+id/action_HistoryOfAllFragment_to_MainFragment"
+            app:destination="@id/MainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newMonth"
+        android:name="com.example.incomecalculator.NewMonth"
+        android:label="fragment_new_month"
+        tools:layout="@layout/fragment_new_month" >
+        <action
+            android:id="@+id/action_newMonth_to_MainFragment"
+            app:destination="@id/MainFragment" />
+    </fragment>
+</navigation>
