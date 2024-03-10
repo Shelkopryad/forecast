@@ -1,5 +1,6 @@
 package com.example.incomecalculator
 
+import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.example.incomecalculator.databinding.FragmentNewMonthBinding
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.Date
 
 class NewMonth : Fragment() {
 
@@ -56,6 +58,40 @@ class NewMonth : Fragment() {
                 "New month started",
                 Toast.LENGTH_SHORT
             ).show()
+        }
+
+        var month = 0
+        var year = 0
+
+        binding.calendarView2.setOnDateChangeListener { calendarView, viewYear, viewMonth, viewDayOfMonth ->
+            val calender: Calendar = Calendar.getInstance()
+            month = viewMonth
+            year = viewYear
+            calender.set(viewYear, viewMonth, viewDayOfMonth)
+            calendarView.date = calender.timeInMillis
+        }
+
+        binding.prevMonthAdd.setOnClickListener {
+            lifecycleScope.launch {
+                val financialMonths = DatabaseRepository.get().getFinancialMonths().takeLast(6)
+                val forecast = getAverageExpense(
+                    financialMonths,
+                    month,
+                    year
+                )
+
+                DatabaseRepository
+                    .get()
+                    .newFinancialMonth(
+                        month,
+                        year,
+                        BigDecimal(binding.prevMonthSalary.text.toString()),
+                        forecast,
+                        BigDecimal(binding.prevMonthActualExpense.text.toString())
+                    )
+            }
+
+            findNavController().navigate(R.id.action_newMonth_to_MainFragment)
         }
     }
 
