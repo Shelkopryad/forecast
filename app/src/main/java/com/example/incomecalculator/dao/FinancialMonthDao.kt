@@ -9,25 +9,24 @@ import java.math.BigDecimal
 @Dao
 interface FinancialMonthDao {
 
-    @Query("SELECT * FROM financial_months")
+    @Query("SELECT * FROM financial_months ORDER BY date DESC")
     fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>>
 
-    @Query("SELECT * FROM financial_months")
+    @Query("SELECT * FROM financial_months ORDER BY date DESC")
     suspend fun getFinancialMonths(): List<FinancialMonth>
 
-    @Query("SELECT * FROM financial_months ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM financial_months ORDER BY date DESC LIMIT 1")
     fun getLastFinancialMonthFlow(): Flow<FinancialMonth>
 
-    @Query("SELECT * FROM financial_months ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM financial_months ORDER BY date DESC LIMIT 1")
     suspend fun getLastFinancialMonth(): FinancialMonth
 
     @Query("SELECT * FROM financial_months WHERE id = (:id)")
     fun getFinancialMonth(id: Int): Flow<FinancialMonth>
 
-    @Query("INSERT INTO financial_months (month, year, monthly_salary, expense_forecast, expense_in_fact) VALUES (:month, :year, :monthlySalary, :expenseForecast, :expenseInFact)")
+    @Query("INSERT INTO financial_months (date, monthly_salary, expense_forecast, expense_in_fact) VALUES (:date, :monthlySalary, :expenseForecast, :expenseInFact)")
     suspend fun newFinancialMonth(
-        month: Int,
-        year: Int,
+        date: String,
         monthlySalary: BigDecimal,
         expenseForecast: BigDecimal,
         expenseInFact: BigDecimal

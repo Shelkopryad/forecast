@@ -31,14 +31,13 @@ class DatabaseRepository private constructor(context: Context) {
         database.financialMonthDao().getLastFinancialMonth()
 
     suspend fun newFinancialMonth(
-        month: Int,
-        year: Int,
+        date: String,
         monthlySalary: BigDecimal,
         expenseForecast: BigDecimal,
         expenseInFact: BigDecimal
     ) = database
         .financialMonthDao()
-        .newFinancialMonth(month, year, monthlySalary, expenseForecast, expenseInFact)
+        .newFinancialMonth(date, monthlySalary, expenseForecast, expenseInFact)
 
     suspend fun updateFinancialMonth(
         id: Int,

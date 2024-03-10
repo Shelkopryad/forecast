@@ -10,9 +10,7 @@ data class FinancialMonth(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
 
-    val month: Int,
-
-    val year: Int,
+    val date: String,
 
     @ColumnInfo(name = "monthly_salary")
     val monthlySalary: BigDecimal,

@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/HistoryFragment"
         android:name="com.example.incomecalculator.HistoryOfMonthFragment"
-        android:label="@string/current_month_history_fragment"
+        android:label="@string/current_month_history_fragment_label"
         tools:layout="@layout/history_of_month">
 
         <action
@@ -37,17 +37,18 @@
     <fragment
         android:id="@+id/historyOfAllFragment"
         android:name="com.example.incomecalculator.HistoryOfAllFragment"
-        android:label="@string/history_fragment"
+        android:label="@string/history_fragment_label"
         tools:layout="@layout/history_of_all">
 
         <action
             android:id="@+id/action_HistoryOfAllFragment_to_MainFragment"
             app:destination="@id/MainFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/newMonth"
         android:name="com.example.incomecalculator.NewMonth"
-        android:label="fragment_new_month"
+        android:label="@string/nem_month_label"
         tools:layout="@layout/fragment_new_month" >
         <action
             android:id="@+id/action_newMonth_to_MainFragment"

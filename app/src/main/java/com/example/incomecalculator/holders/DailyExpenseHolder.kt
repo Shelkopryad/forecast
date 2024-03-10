@@ -8,8 +8,8 @@ class DailyExpenseHolder(
     private val binding: ListDailyExpensesBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(dailyExpense: DailyExpense) {
-        binding.dateOfExpenseTextView.text = "Date: ${dailyExpense.date};"
-        binding.amountOfExpense.text = "Expense: ${dailyExpense.amount}"
+        binding.dateOfExpenseTextView.text = "Date: ${dailyExpense.date}"
+        binding.amountOfExpense.text = "Spent: ${dailyExpense.amount}"
         binding.categoryTextView.text = "Category: ${dailyExpense.category}"
     }
 }
