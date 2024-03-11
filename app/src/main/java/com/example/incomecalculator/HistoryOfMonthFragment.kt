@@ -50,7 +50,7 @@ class HistoryOfMonthFragment : Fragment() {
 
             val expStr =
                 "By categories:\n" + expensesByCategory.entries.joinToString("\n") { (category, value) ->
-                    "$category: $value"
+                    "$category: €$value"
                 }
 
             binding.expensesChart.text = expStr
