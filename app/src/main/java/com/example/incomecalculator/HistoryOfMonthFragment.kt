@@ -1,20 +1,19 @@
 package com.example.incomecalculator
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.incomecalculator.adapters.DailyExpenseAdapter
 import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.HistoryOfMonthBinding
 import com.example.incomecalculator.view_models.DailyExpenseViewModel
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class HistoryOfMonthFragment : Fragment() {
 
@@ -38,18 +37,27 @@ class HistoryOfMonthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                DatabaseRepository.get().getLastFinancialMonthFlow().collect { financialMonth ->
-                    if (financialMonth != null) {
-                        val dailyExpenses =
-                            dailyExpenseViewModel.loadDailyExpenses(financialMonth.id)
-                        binding.expensesOfFinancialMonthsRecyclerView.adapter =
-                            DailyExpenseAdapter(dailyExpenses)
-                    }
+        lifecycleScope.launch {
+            val financialMonth = DatabaseRepository.get().getLastFinancialMonth()
+            val dailyExpenses =
+                dailyExpenseViewModel.loadDailyExpenses(financialMonth!!.id)
+
+            val expensesByCategory = dailyExpenses!!.groupBy { it.category }
+                .mapValues { (_, expenses) ->
+                    expenses.map { it.amount }.reduceOrNull(BigDecimal::plus) ?: BigDecimal.ZERO
                 }
-            }
+                .toMutableMap()
+
+            val expStr =
+                "By categories:\n" + expensesByCategory.entries.joinToString("\n") { (category, value) ->
+                    "$category: €$value"
+                }
+
+            binding.expensesChart.text = expStr
+            binding.expensesOfFinancialMonthsRecyclerView.adapter =
+                DailyExpenseAdapter(dailyExpenses!!)
         }
+
     }
 
     override fun onDestroyView() {

@@ -12,8 +12,8 @@ class FinancialMonthHolder(
         val financialMonthDate = LocalDate.parse(financialMonth.date)
 
         binding.salaryTextViewList.text =
-            "Earned on ${financialMonthDate.month.name.lowercase()} ${financialMonthDate.year}: ${financialMonth.monthlySalary}"
-        binding.forecastTextView.text = "Forecast: ${financialMonth.expenseForecast}"
-        binding.actualExpenseTextView.text = "Expenses: ${financialMonth.expenseInFact}"
+            "Earned on ${financialMonthDate.month.name.lowercase()} ${financialMonthDate.year}: €${financialMonth.monthlySalary}"
+        binding.forecastTextView.text = "Forecast: €${financialMonth.expenseForecast}"
+        binding.actualExpenseTextView.text = "Expenses: €${financialMonth.expenseInFact}"
     }
 }

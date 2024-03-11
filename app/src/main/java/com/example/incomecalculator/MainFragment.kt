@@ -53,9 +53,9 @@ class MainFragment : Fragment() {
                     val expenseForecast = financialMonth?.expenseForecast
                     val expenseInFact = financialMonth?.expenseInFact
 
-                    binding.salaryTextView.setText("Salary: ${salary ?: 0}")
-                    binding.expenseForecastTextView.setText("Expense forecast: ${expenseForecast ?: 0}")
-                    binding.expenseInFactTextView.setText("Actual expense: ${expenseInFact ?: 0}")
+                    binding.salaryTextView.setText("Salary: €${salary ?: 0}")
+                    binding.expenseForecastTextView.setText("Expense forecast: €${expenseForecast ?: 0}")
+                    binding.expenseInFactTextView.setText("Actual expense: €${expenseInFact ?: 0}")
                 }
             }
         }
