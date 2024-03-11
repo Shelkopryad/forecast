@@ -7,7 +7,7 @@
     <string name="expense_forecast_text_view">Expense forecast: 2222</string>
     <string name="expense_in_fact_text_view">Actual expense: 2222</string>
     <string name="start_next_month_btn">Start next month</string>
-    <string name="history_of_current_month_btn">Show month expenses</string>
+    <string name="history_of_current_month_btn">Show monthly expenses</string>
     <string name="history_of_of_all_month_btn">History</string>
     <string name="expense_input">Expense</string>
     <string name="add">Add</string>
