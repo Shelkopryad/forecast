@@ -30,7 +30,8 @@ class MainFragment : Fragment() {
         "Shop",
         "Pets",
         "Services",
-        "Other",
+        "Travels",
+        "Other"
     )
 
     override fun onCreateView(
@@ -49,13 +50,23 @@ class MainFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 databaseRepository.getLastFinancialMonthFlow().collect { financialMonth ->
-                    val salary = financialMonth?.monthlySalary
-                    val expenseForecast = financialMonth?.expenseForecast
-                    val expenseInFact = financialMonth?.expenseInFact
+                    binding.salaryTextView.text =
+                        getString(
+                            R.string.salary_text_view,
+                            (financialMonth?.monthlySalary ?: 0)
+                        )
 
-                    binding.salaryTextView.setText("Salary: €${salary ?: 0}")
-                    binding.expenseForecastTextView.setText("Expense forecast: €${expenseForecast ?: 0}")
-                    binding.expenseInFactTextView.setText("Actual expense: €${expenseInFact ?: 0}")
+                    binding.expenseForecastTextView.text =
+                        getString(
+                            R.string.expense_forecast_text_view,
+                            (financialMonth?.expenseForecast ?: 0)
+                        )
+
+                    binding.expenseInFactTextView.text =
+                        getString(
+                            R.string.expense_in_fact_text_view,
+                            (financialMonth?.expenseInFact ?: 0)
+                        )
                 }
             }
         }
@@ -112,6 +123,10 @@ class MainFragment : Fragment() {
         println("in scope: $expense")
 
         val currentMonth = DatabaseRepository.get().getLastFinancialMonth()
+        val currentForecast = currentMonth.expenseForecast
+        val newExpense = currentMonth.expenseInFact.plus(expense)
+        val averageForecast = currentMonth.expenseInFact
+
 
         DatabaseRepository.get().newDailyExpense(
             LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),

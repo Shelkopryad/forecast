@@ -6,7 +6,6 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import java.math.BigDecimal
 
-
 @Entity(
     tableName = "daily_expenses", foreignKeys = [
         ForeignKey(

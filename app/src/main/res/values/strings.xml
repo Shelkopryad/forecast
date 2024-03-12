@@ -3,9 +3,9 @@
 
     <!-- main fragment -->
     <string name="main_fragment_label">Forecast for current Month</string>
-    <string name="salary_text_view">Salary for: 2222</string>
-    <string name="expense_forecast_text_view">Expense forecast: 2222</string>
-    <string name="expense_in_fact_text_view">Actual expense: 2222</string>
+    <string name="salary_text_view">Salary: €%1$s</string>
+    <string name="expense_forecast_text_view">Expense forecast: €%1$s</string>
+    <string name="expense_in_fact_text_view">Actual expense: €%1$s</string>
     <string name="start_next_month_btn">Start next month</string>
     <string name="history_of_current_month_btn">Show monthly expenses</string>
     <string name="history_of_of_all_month_btn">History</string>
@@ -19,10 +19,15 @@
 
     <!-- history fragment -->
     <string name="history_fragment_label">History</string>
+    <string name="earned_text_view_history_fragment">Earned on %1$s %2$s: €%3$s</string>
+    <string name="forecast_text_view_history_fragment">Forecast: €%1$s</string>
+    <string name="expenses_text_view_history_fragment">Spent: €%1$s</string>
 
     <!-- month expenses fragment -->
     <string name="current_month_history_fragment_label">Expenses history</string>
-
+    <string name="current_month_expense_date">Date: %1$s</string>
+    <string name="current_month_spent">Spent: €%1$s</string>
+    <string name="current_month_expense_category">Category: %1$s</string>
 
 <!--    <string name="action_settings">Settings</string>-->
 </resources>
