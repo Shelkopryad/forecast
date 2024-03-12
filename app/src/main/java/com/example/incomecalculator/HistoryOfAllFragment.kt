@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.incomecalculator.adapters.FinancialMonthAdapter
-import com.example.incomecalculator.view_models.FinancialMonthListViewModel
 import com.example.incomecalculator.databinding.HistoryOfAllBinding
+import com.example.incomecalculator.view_models.FinancialMonthListViewModel
 import kotlinx.coroutines.launch
 
 class HistoryOfAllFragment : Fragment() {

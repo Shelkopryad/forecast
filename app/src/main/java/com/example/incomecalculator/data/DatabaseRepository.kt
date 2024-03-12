@@ -3,7 +3,6 @@ package com.example.incomecalculator.data
 import android.content.Context
 import androidx.room.Room
 import kotlinx.coroutines.flow.Flow
-import java.lang.IllegalStateException
 import java.math.BigDecimal
 
 private const val DATABASE_NAME = "income_forecast_db"
