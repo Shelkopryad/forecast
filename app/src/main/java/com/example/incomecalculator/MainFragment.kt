@@ -26,11 +26,13 @@ class MainFragment : Fragment() {
 
     private val categories = listOf(
         "Rent",
+        "Home",
         "Food",
         "Shop",
         "Pets",
         "Services",
         "Travels",
+        "Free time",
         "Other"
     )
 
