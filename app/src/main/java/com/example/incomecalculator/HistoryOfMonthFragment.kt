@@ -13,7 +13,6 @@ import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.HistoryOfMonthBinding
 import com.example.incomecalculator.view_models.DailyExpenseViewModel
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 class HistoryOfMonthFragment : Fragment() {
 
@@ -42,18 +41,6 @@ class HistoryOfMonthFragment : Fragment() {
             val dailyExpenses =
                 dailyExpenseViewModel.loadDailyExpenses(financialMonth!!.id)
 
-            val expensesByCategory = dailyExpenses!!.groupBy { it.category }
-                .mapValues { (_, expenses) ->
-                    expenses.map { it.amount }.reduceOrNull(BigDecimal::plus) ?: BigDecimal.ZERO
-                }
-                .toMutableMap()
-
-            val expStr =
-                "By categories:\n" + expensesByCategory.entries.joinToString("\n") { (category, value) ->
-                    "\t$category: €$value"
-                }
-
-            binding.expensesChart.text = expStr
             binding.expensesOfFinancialMonthsRecyclerView.adapter =
                 DailyExpenseAdapter(dailyExpenses!!)
         }

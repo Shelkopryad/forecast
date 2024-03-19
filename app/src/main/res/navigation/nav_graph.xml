@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_MainFragment_to_newMonth"
             app:destination="@id/newMonth" />
+        <action
+            android:id="@+id/action_MainFragment_to_newExpense"
+            app:destination="@id/newExpense" />
     </fragment>
 
     <fragment
@@ -49,9 +52,18 @@
         android:id="@+id/newMonth"
         android:name="com.example.incomecalculator.NewMonth"
         android:label="@string/nem_month_label"
-        tools:layout="@layout/fragment_new_month" >
+        tools:layout="@layout/fragment_new_month">
         <action
             android:id="@+id/action_newMonth_to_MainFragment"
+            app:destination="@id/MainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newExpense"
+        android:name="com.example.incomecalculator.NewExpense"
+        android:label="@string/new_expenses_fragment_label"
+        tools:layout="@layout/new_expense">
+        <action
+            android:id="@+id/action_newExpense_to_MainFragment"
             app:destination="@id/MainFragment" />
     </fragment>
 </navigation>

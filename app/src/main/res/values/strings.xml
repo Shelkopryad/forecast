@@ -6,11 +6,11 @@
     <string name="salary_text_view">Salary: <b>€%1$s</b></string>
     <string name="expense_forecast_text_view">Expense forecast: <b>€%1$s</b></string>
     <string name="expense_in_fact_text_view">Actual expense: <b>€%1$s</b></string>
+    <string name="by_category">By category:</string>
+    <string name="to_add_expense"><u>Add expenses</u></string>
     <string name="start_next_month_btn">Start next month</string>
-    <string name="history_of_current_month_btn">Show monthly expenses</string>
-    <string name="history_of_of_all_month_btn">History</string>
+    <string name="history_of_current_month_btn"><u>Details</u></string>
     <string name="expense_input">Expense</string>
-    <string name="add">Add</string>
 
     <!-- new month fragment -->
     <string name="nem_month_label">New Month</string>
@@ -29,5 +29,12 @@
     <string name="current_month_spent">Spent: €%1$s</string>
     <string name="current_month_expense_category">Category: %1$s</string>
 
-<!--    <string name="action_settings">Settings</string>-->
+    <!-- new expenses fragment -->
+    <string name="new_expenses_fragment_label">New expenses</string>
+    <string name="expense_amount_label">Amount:</string>
+    <string name="expense_category_label">Category:</string>
+
+    <!-- menu -->
+    <string name="menu_history">History</string>
+
 </resources>

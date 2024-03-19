@@ -12,6 +12,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:text="@string/salary_text_view"
+        android:textFontWeight="50"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,6 +24,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:text="@string/expense_forecast_text_view"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/salaryTextView" />
 
@@ -32,68 +35,57 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:text="@string/expense_in_fact_text_view"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expenseForecastTextView" />
 
-    <EditText
-        android:id="@+id/expenseInput"
-        android:layout_width="100dp"
+    <TextView
+        android:id="@+id/byCategory"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:layout_weight="1"
-        android:hint="@string/expense_input"
-        android:inputType="numberDecimal"
+        android:layout_marginTop="20dp"
+        android:lineSpacingExtra="5sp"
+        android:text="@string/by_category"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expenseInFactTextView" />
-
-    <Spinner
-        android:id="@+id/categoriesSelect"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toEndOf="@id/expenseInput"
         app:layout_constraintTop_toBottomOf="@+id/expenseInFactTextView" />
 
-    <Button
-        android:id="@+id/addExpenseBtn"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/add"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toEndOf="@id/categoriesSelect"
-        app:layout_constraintTop_toBottomOf="@+id/expenseInFactTextView" />
-
-    <Button
+    <TextView
         android:id="@+id/historyOfMonthBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
+        android:autoLink="all"
+        android:linksClickable="true"
         android:text="@string/history_of_current_month_btn"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expenseInput" />
+        app:layout_constraintTop_toBottomOf="@+id/byCategory" />
 
-    <Button
-        android:id="@+id/historyOfAllBtn"
+    <TextView
+        android:id="@+id/toAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/history_of_of_all_month_btn"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toEndOf="@id/historyOfMonthBtn"
-        app:layout_constraintTop_toBottomOf="@id/expenseInput" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:text="@string/to_add_expense"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/historyOfMonthBtn" />
 
     <Button
         android:id="@+id/newFinancialMonthBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_next_month_btn"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="70dp"
+        android:text="@string/start_next_month_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/historyOfAllBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/toAddExpense" />
 </androidx.constraintlayout.widget.ConstraintLayout>

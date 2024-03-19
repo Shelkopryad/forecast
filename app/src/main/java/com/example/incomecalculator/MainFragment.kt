@@ -30,6 +30,7 @@ class MainFragment : Fragment() {
         "Food",
         "Shop",
         "Pets",
+        "Medicine",
         "Services",
         "Travels",
         "Free time",
@@ -69,6 +70,23 @@ class MainFragment : Fragment() {
                             R.string.expense_in_fact_text_view,
                             (financialMonth?.expenseInFact ?: 0)
                         )
+
+                    databaseRepository.getDailyExpansesByFinMonthId(financialMonth!!.id)
+
+                    val expensesGroupByCategory = databaseRepository
+                        .getDailyExpansesByFinMonthId(financialMonth!!.id)
+                        .groupBy { it.category }
+                        .mapValues { (_, expenses) ->
+                            expenses.map { it.amount }.reduceOrNull(BigDecimal::plus) ?: BigDecimal.ZERO
+                        }
+                        .toMutableMap()
+
+                    val expStr =
+                        expensesGroupByCategory.entries.joinToString("\n") { (category, value) ->
+                            "\t - ${category.lowercase()}: €$value"
+                        }
+
+                    binding.byCategory.text = "By category:\n" + expStr
                 }
             }
         }
@@ -77,70 +95,13 @@ class MainFragment : Fragment() {
             findNavController().navigate(R.id.action_MainFragment_to_HistoryFragment)
         }
 
-        binding.historyOfAllBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_MainFragment_to_HistoryOfAllFragment)
-        }
-
         binding.newFinancialMonthBtn.setOnClickListener {
             findNavController().navigate(R.id.action_MainFragment_to_newMonth)
         }
 
-        val adapter =
-            ArrayAdapter(binding.root.context, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.categoriesSelect.adapter = adapter
-
-        binding.categoriesSelect.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val selectedItem = categories[position]
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
-            }
-
-        binding.addExpenseBtn.setOnClickListener {
-            if (binding.expenseInput.text.isNotEmpty()) {
-                lifecycleScope.launch {
-                    createNewDailyExpense()
-                }
-                binding.expenseInput.setText("")
-            }
+        binding.toAddExpense.setOnClickListener {
+            findNavController().navigate(R.id.action_MainFragment_to_newExpense)
         }
-    }
-
-    private suspend fun createNewDailyExpense() {
-        val expense = try {
-            BigDecimal(binding.expenseInput.text.toString())
-        } catch (e: NumberFormatException) {
-            BigDecimal.ZERO
-        }
-        println("in scope: $expense")
-
-        val currentMonth = DatabaseRepository.get().getLastFinancialMonth()
-        val currentForecast = currentMonth.expenseForecast
-        val newExpense = currentMonth.expenseInFact.plus(expense)
-        val averageForecast = currentMonth.expenseInFact
-
-
-        DatabaseRepository.get().newDailyExpense(
-            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            expense,
-            currentMonth.id,
-            binding.categoriesSelect.selectedItem.toString()
-        )
-
-        DatabaseRepository.get().updateFinancialMonth(
-            currentMonth.id,
-            currentMonth.expenseInFact.plus(expense)
-        )
     }
 
     override fun onDestroyView() {
