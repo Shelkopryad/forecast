@@ -16,6 +16,8 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+private const val PATTERN = "yyyy-MM-dd"
+
 class NewExpense : Fragment() {
 
     private var _binding: NewExpenseBinding? = null
@@ -26,6 +28,7 @@ class NewExpense : Fragment() {
         "Rent",
         "Home",
         "Food",
+        "Cafe",
         "Shop",
         "Pets",
         "Medicine",
@@ -37,7 +40,6 @@ class NewExpense : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -47,19 +49,15 @@ class NewExpense : Fragment() {
     ): View? {
         _binding = NewExpenseBinding.inflate(inflater, container, false)
 
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
 
-        }
         val adapter =
             ArrayAdapter(binding.root.context, R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         binding.categoriesSelect.adapter = adapter
 
         binding.categoriesSelect.onItemSelectedListener =
@@ -94,12 +92,11 @@ class NewExpense : Fragment() {
         } catch (e: NumberFormatException) {
             BigDecimal.ZERO
         }
-        println("in scope: $expense")
 
         val currentMonth = DatabaseRepository.get().getLastFinancialMonth()
 
         DatabaseRepository.get().newDailyExpense(
-            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            LocalDate.now().format(DateTimeFormatter.ofPattern(PATTERN)),
             expense,
             currentMonth.id,
             binding.categoriesSelect.selectedItem.toString()

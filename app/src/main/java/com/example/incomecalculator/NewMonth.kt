@@ -18,14 +18,15 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+private const val PATTERN = "yyyy-MM-dd"
+
 class NewMonth : Fragment() {
 
     private var _binding: FragmentNewMonthBinding? = null
 
     private val binding get() = _binding!!
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-    private val pattern = "yyyy-MM-dd"
+    private val dateFormat = SimpleDateFormat(PATTERN)
     private val calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +45,7 @@ class NewMonth : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.startNewMonth.setOnClickListener {
-            val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern(pattern))
+            val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern(PATTERN))
             val salary = BigDecimal(binding.salary.text.toString())
 
             lifecycleScope.launch {
@@ -97,7 +98,7 @@ class NewMonth : Fragment() {
             val localDateFromDateString = LocalDate.parse(lastMonths.last().date)
             val sameMonthPreviousYearDate = localDateFromDateString
                 .minusYears(1)
-                .format(DateTimeFormatter.ofPattern(pattern))
+                .format(DateTimeFormatter.ofPattern(PATTERN))
 
             val averageExpenseInFact = if (lastMonths.isNotEmpty()) {
                 lastMonths

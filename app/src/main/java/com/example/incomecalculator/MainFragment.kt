@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,27 +13,12 @@ import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.MainFragmentBinding
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class MainFragment : Fragment() {
 
     private var _binding: MainFragmentBinding? = null
 
     private val binding get() = _binding!!
-
-    private val categories = listOf(
-        "Rent",
-        "Home",
-        "Food",
-        "Shop",
-        "Pets",
-        "Medicine",
-        "Services",
-        "Travels",
-        "Free time",
-        "Other"
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,7 +60,8 @@ class MainFragment : Fragment() {
                         .getDailyExpansesByFinMonthId(financialMonth!!.id)
                         .groupBy { it.category }
                         .mapValues { (_, expenses) ->
-                            expenses.map { it.amount }.reduceOrNull(BigDecimal::plus) ?: BigDecimal.ZERO
+                            expenses.map { it.amount }.reduceOrNull(BigDecimal::plus)
+                                ?: BigDecimal.ZERO
                         }
                         .toMutableMap()
 
