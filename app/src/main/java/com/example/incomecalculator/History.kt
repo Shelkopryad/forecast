@@ -15,7 +15,7 @@ import com.example.incomecalculator.databinding.HistoryOfAllBinding
 import com.example.incomecalculator.view_models.FinancialMonthListViewModel
 import kotlinx.coroutines.launch
 
-class HistoryOfAllFragment : Fragment() {
+class History : Fragment() {
 
     private var _binding: HistoryOfAllBinding? = null
 

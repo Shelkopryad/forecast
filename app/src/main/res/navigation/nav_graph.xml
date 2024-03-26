@@ -23,11 +23,14 @@
         <action
             android:id="@+id/action_MainFragment_to_newExpense"
             app:destination="@id/newExpense" />
+        <action
+            android:id="@+id/action_MainFragment_to_yearForecast"
+            app:destination="@id/yearForecast" />
     </fragment>
 
     <fragment
         android:id="@+id/HistoryFragment"
-        android:name="com.example.incomecalculator.HistoryOfMonthFragment"
+        android:name="com.example.incomecalculator.MonthDetails"
         android:label="@string/current_month_history_fragment_label"
         tools:layout="@layout/history_of_month">
 
@@ -38,7 +41,7 @@
 
     <fragment
         android:id="@+id/historyOfAllFragment"
-        android:name="com.example.incomecalculator.HistoryOfAllFragment"
+        android:name="com.example.incomecalculator.History"
         android:label="@string/history_fragment_label"
         tools:layout="@layout/history_of_all">
 
@@ -66,6 +69,17 @@
 
         <action
             android:id="@+id/action_newExpense_to_MainFragment"
+            app:destination="@id/MainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/yearForecast"
+        android:name="com.example.incomecalculator.YearForecast"
+        android:label="year_forecast"
+        tools:layout="@layout/year_forecast" >
+
+        <action
+            android:id="@+id/action_yearForecast_to_MainFragment"
             app:destination="@id/MainFragment" />
     </fragment>
 </navigation>

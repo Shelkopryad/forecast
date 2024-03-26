@@ -14,7 +14,7 @@ import com.example.incomecalculator.databinding.HistoryOfMonthBinding
 import com.example.incomecalculator.view_models.DailyExpenseViewModel
 import kotlinx.coroutines.launch
 
-class HistoryOfMonthFragment : Fragment() {
+class MonthDetails : Fragment() {
 
     private var _binding: HistoryOfMonthBinding? = null
 
@@ -44,7 +44,6 @@ class HistoryOfMonthFragment : Fragment() {
             binding.expensesOfFinancialMonthsRecyclerView.adapter =
                 DailyExpenseAdapter(dailyExpenses!!)
         }
-
     }
 
     override fun onDestroyView() {

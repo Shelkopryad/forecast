@@ -34,7 +34,12 @@
     <string name="expense_amount_label">Amount:</string>
     <string name="expense_category_label">Category:</string>
 
+    <!-- year forecast fragment -->
+    <string name="income_forecast">Expected income: <b>€%1$s</b></string>
+    <string name="expense_forecast">Expected expense: <b>€%1$s</b></string>
+
     <!-- menu -->
     <string name="menu_history">History</string>
+    <string name="year_forecast">Year Forecast</string>
 
 </resources>

@@ -54,23 +54,23 @@ class MainFragment : Fragment() {
                             (financialMonth?.expenseInFact ?: 0)
                         )
 
-                    databaseRepository.getDailyExpansesByFinMonthId(financialMonth!!.id)
+                    if (financialMonth != null) {
+                        val expensesGroupByCategory = databaseRepository
+                            .getDailyExpansesByFinMonthId(financialMonth.id)
+                            .groupBy { it.category }
+                            .mapValues { (_, expenses) ->
+                                expenses.map { it.amount }.reduceOrNull(BigDecimal::plus)
+                                    ?: BigDecimal.ZERO
+                            }
+                            .toMutableMap()
 
-                    val expensesGroupByCategory = databaseRepository
-                        .getDailyExpansesByFinMonthId(financialMonth!!.id)
-                        .groupBy { it.category }
-                        .mapValues { (_, expenses) ->
-                            expenses.map { it.amount }.reduceOrNull(BigDecimal::plus)
-                                ?: BigDecimal.ZERO
-                        }
-                        .toMutableMap()
+                        val expStr =
+                            expensesGroupByCategory.entries.joinToString("\n") { (category, value) ->
+                                "\t - ${category.lowercase()}: €$value"
+                            }
 
-                    val expStr =
-                        expensesGroupByCategory.entries.joinToString("\n") { (category, value) ->
-                            "\t - ${category.lowercase()}: €$value"
-                        }
-
-                    binding.byCategory.text = "By category:\n" + expStr
+                        binding.byCategory.text = "By category:\n" + expStr
+                    }
                 }
             }
         }

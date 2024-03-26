@@ -35,10 +35,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        println(item.toString())
         return when (item.itemId) {
             R.id.history -> {
                 findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_MainFragment_to_HistoryOfAllFragment)
+                true
+            }
+
+            R.id.yearForecast -> {
+                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_MainFragment_to_yearForecast)
                 true
             }
 
