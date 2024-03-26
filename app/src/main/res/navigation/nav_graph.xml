@@ -75,7 +75,7 @@
     <fragment
         android:id="@+id/yearForecast"
         android:name="com.example.incomecalculator.YearForecast"
-        android:label="year_forecast"
+        android:label="@string/year_forecast"
         tools:layout="@layout/year_forecast" >
 
         <action
