@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.NewExpenseBinding
 import kotlinx.coroutines.launch
@@ -23,20 +26,6 @@ class NewExpense : Fragment() {
     private var _binding: NewExpenseBinding? = null
 
     private val binding get() = _binding!!
-
-    private val categories = listOf(
-        "Rent",
-        "Home",
-        "Food",
-        "Cafe",
-        "Shop",
-        "Pets",
-        "Medicine",
-        "Services",
-        "Travels",
-        "Free time",
-        "Other"
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,34 +43,58 @@ class NewExpense : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val categories = DatabaseRepository.get().getCategories().map { it.name }.sorted()
+                val adapter =
+                    ArrayAdapter(binding.root.context, R.layout.simple_spinner_item, categories)
+                adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+                binding.categoriesSelect.adapter = adapter
 
-        val adapter =
-            ArrayAdapter(binding.root.context, R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        binding.categoriesSelect.adapter = adapter
+                binding.categoriesSelect.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val selectedItem = categories[position]
+                        }
 
-        binding.categoriesSelect.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val selectedItem = categories[position]
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                        }
+                    }
+
+                binding.addExpenseBtn.setOnClickListener {
+                    if (binding.expenseInput.text.isNotEmpty()) {
+                        lifecycleScope.launch {
+                            createNewDailyExpense()
+                        }
+                        binding.expenseInput.setText("")
+                        Toast.makeText(
+                            binding.root.context,
+                            "New expense added",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
+                binding.addCategory.setOnClickListener {
+                    if (binding.categoryInput.text.isNotEmpty()) {
+                        lifecycleScope.launch {
+                            DatabaseRepository.get()
+                                .addCategory(binding.categoryInput.text.toString())
+                        }
+                        binding.categoryInput.setText("")
+                        Toast.makeText(
+                            binding.root.context,
+                            "New category added",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-            }
-
-        binding.addExpenseBtn.setOnClickListener {
-            if (binding.expenseInput.text.isNotEmpty()) {
-                lifecycleScope.launch {
-                    createNewDailyExpense()
-                }
-                binding.expenseInput.setText("")
             }
         }
     }
@@ -95,17 +108,19 @@ class NewExpense : Fragment() {
 
         val currentMonth = DatabaseRepository.get().getLastFinancialMonth()
 
-        DatabaseRepository.get().newDailyExpense(
-            LocalDate.now().format(DateTimeFormatter.ofPattern(PATTERN)),
-            expense,
-            currentMonth.id,
-            binding.categoriesSelect.selectedItem.toString()
-        )
+        if (currentMonth != null) {
+            DatabaseRepository.get().newDailyExpense(
+                LocalDate.now().format(DateTimeFormatter.ofPattern(PATTERN)),
+                expense,
+                currentMonth.id,
+                binding.categoriesSelect.selectedItem.toString()
+            )
 
-        DatabaseRepository.get().updateFinancialMonth(
-            currentMonth.id,
-            currentMonth.expenseInFact.plus(expense)
-        )
+            DatabaseRepository.get().updateFinancialMonth(
+                currentMonth.id,
+                currentMonth.expenseInFact.plus(expense)
+            )
+        }
     }
 
     override fun onDestroyView() {

@@ -29,7 +29,10 @@ class DatabaseRepository private constructor(context: Context) {
     suspend fun getLastFinancialMonth(): FinancialMonth =
         database.financialMonthDao().getLastFinancialMonth()
 
-    suspend fun getFinancialMonthsByYear(startDate: String, finishDate: String): List<FinancialMonth> =
+    suspend fun getFinancialMonthsByYear(
+        startDate: String,
+        finishDate: String
+    ): List<FinancialMonth> =
         database.financialMonthDao().getFinancialMonthsByYear(startDate, finishDate)
 
     suspend fun newFinancialMonth(
@@ -62,6 +65,9 @@ class DatabaseRepository private constructor(context: Context) {
 
     suspend fun getCategories(): List<Category> =
         database.categoryDao().getCategories()
+
+    suspend fun addCategory(name: String) =
+        database.categoryDao().addCategory(name)
 
     companion object {
         private var INSTANCE: DatabaseRepository? = null

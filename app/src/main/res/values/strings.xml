@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">Income Forecast</string>
 
     <!-- main fragment -->
@@ -33,6 +33,8 @@
     <string name="new_expenses_fragment_label">New expenses</string>
     <string name="expense_amount_label">Amount:</string>
     <string name="expense_category_label">Category:</string>
+    <string name="not_enough_category">Not enough categories? Create new!</string>
+    <string name="add_category_btn">Add</string>
 
     <!-- year forecast fragment -->
     <string name="income_forecast">Expected income: <b>€%1$s</b></string>

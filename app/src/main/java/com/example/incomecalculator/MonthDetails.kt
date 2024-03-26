@@ -38,11 +38,13 @@ class MonthDetails : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             val financialMonth = DatabaseRepository.get().getLastFinancialMonth()
-            val dailyExpenses =
-                dailyExpenseViewModel.loadDailyExpenses(financialMonth!!.id)
+            if (financialMonth != null) {
+                val dailyExpenses =
+                    dailyExpenseViewModel.loadDailyExpenses(financialMonth.id)
 
-            binding.expensesOfFinancialMonthsRecyclerView.adapter =
-                DailyExpenseAdapter(dailyExpenses!!)
+                binding.expensesOfFinancialMonthsRecyclerView.adapter =
+                    DailyExpenseAdapter(dailyExpenses!!)
+            }
         }
     }
 
