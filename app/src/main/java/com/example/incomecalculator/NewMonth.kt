@@ -49,12 +49,9 @@ class NewMonth : Fragment() {
             val salary = BigDecimal(binding.salary.text.toString())
 
             lifecycleScope.launch {
-                val financialMonths = DatabaseRepository.get().getFinancialMonths().takeLast(6)
-                val forecast = getAverageExpense(financialMonths)
-                println("$formattedDate, $salary, $forecast")
                 DatabaseRepository
                     .get()
-                    .newFinancialMonth(formattedDate, salary, forecast, BigDecimal.ZERO)
+                    .newFinancialMonth(formattedDate, salary, BigDecimal.ZERO)
             }
 
             findNavController().navigate(R.id.action_newMonth_to_MainFragment)
@@ -64,61 +61,5 @@ class NewMonth : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        binding.calendarView2.setOnDateChangeListener { calendarView, viewYear, viewMonth, viewDayOfMonth ->
-            calendar.set(viewYear, viewMonth, viewDayOfMonth)
-            calendarView.date = calendar.timeInMillis
-        }
-
-        binding.prevMonthAdd.setOnClickListener {
-            lifecycleScope.launch {
-                val financialMonths = DatabaseRepository.get().getFinancialMonths().takeLast(6)
-                val forecast = getAverageExpense(financialMonths)
-
-                calendar.timeInMillis = binding.calendarView2.date
-
-                DatabaseRepository
-                    .get()
-                    .newFinancialMonth(
-                        dateFormat.format(calendar.time),
-                        BigDecimal(binding.prevMonthSalary.text.toString()),
-                        forecast,
-                        BigDecimal(binding.prevMonthActualExpense.text.toString())
-                    )
-            }
-
-            findNavController().navigate(R.id.action_newMonth_to_MainFragment)
-        }
-    }
-
-    private fun getAverageExpense(
-        lastMonths: List<FinancialMonth>,
-    ): BigDecimal {
-        if (lastMonths.isNotEmpty()) {
-            val localDateFromDateString = LocalDate.parse(lastMonths.last().date)
-            val sameMonthPreviousYearDate = localDateFromDateString
-                .minusYears(1)
-                .format(DateTimeFormatter.ofPattern(PATTERN))
-
-            val averageExpenseInFact = if (lastMonths.isNotEmpty()) {
-                lastMonths
-                    .map { it.expenseInFact }
-                    .reduce { acc, bigDecimal -> acc + bigDecimal } / BigDecimal(lastMonths.size)
-            } else {
-                BigDecimal.ZERO
-            }
-
-            val lastYearSameMonth =
-                lastMonths.findLast { it.date == sameMonthPreviousYearDate }
-
-            val forecast = if (lastYearSameMonth != null) {
-                (averageExpenseInFact + lastYearSameMonth.expenseInFact) / BigDecimal(2)
-            } else {
-                averageExpenseInFact
-            }
-            return forecast
-        }
-
-        return BigDecimal.ZERO
     }
 }

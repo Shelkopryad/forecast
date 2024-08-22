@@ -15,9 +15,6 @@ data class FinancialMonth(
     @ColumnInfo(name = "monthly_salary")
     val monthlySalary: BigDecimal,
 
-    @ColumnInfo(name = "expense_forecast")
-    val expenseForecast: BigDecimal,
-
-    @ColumnInfo(name = "expense_in_fact")
-    val expenseInFact: BigDecimal
+    @ColumnInfo(name = "monthly_expense")
+    val monthlyExpense: BigDecimal
 )

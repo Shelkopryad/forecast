@@ -12,9 +12,6 @@ interface FinancialMonthDao {
     @Query("SELECT * FROM financial_months ORDER BY date DESC")
     fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>>
 
-    @Query("SELECT * FROM financial_months ORDER BY date DESC")
-    suspend fun getFinancialMonths(): List<FinancialMonth>
-
     @Query("SELECT * FROM financial_months ORDER BY date DESC LIMIT 1")
     fun getLastFinancialMonthFlow(): Flow<FinancialMonth>
 
@@ -25,16 +22,15 @@ interface FinancialMonthDao {
     fun getFinancialMonth(id: Int): Flow<FinancialMonth>
 
     @Query("SELECT * FROM financial_months WHERE date BETWEEN :startDate AND :finishDate")
-    suspend fun getFinancialMonthsByYear(startDate: String, finishDate: String): List<FinancialMonth>
+    fun getFinancialMonthsByYear(startDate: String, finishDate: String): Flow<List<FinancialMonth>>
 
-    @Query("INSERT INTO financial_months (date, monthly_salary, expense_forecast, expense_in_fact) VALUES (:date, :monthlySalary, :expenseForecast, :expenseInFact)")
+    @Query("INSERT INTO financial_months (date, monthly_salary, monthly_expense) VALUES (:date, :monthlySalary, :monthlyExpense)")
     suspend fun newFinancialMonth(
         date: String,
         monthlySalary: BigDecimal,
-        expenseForecast: BigDecimal,
-        expenseInFact: BigDecimal
+        monthlyExpense: BigDecimal
     )
 
-    @Query("UPDATE financial_months SET expense_in_fact = :expenseInFact WHERE id = :id")
-    suspend fun updateFinancialMonth(id: Int, expenseInFact: BigDecimal)
+    @Query("UPDATE financial_months SET monthly_expense = :monthlyExpense WHERE id = :id")
+    suspend fun updateFinancialMonth(id: Int, monthlyExpense: BigDecimal)
 }

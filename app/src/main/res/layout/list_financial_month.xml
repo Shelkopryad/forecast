@@ -19,27 +19,14 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/forecastTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
-        android:text="@string/forecast_text_view_history_fragment"
-        app:layout_constraintBottom_toTopOf="@+id/actualExpenseTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/salaryTextViewList" />
-
-    <TextView
         android:id="@+id/actualExpenseTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:text="@string/expenses_text_view_history_fragment"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/forecastTextView"
-        app:layout_constraintTop_toBottomOf="@+id/forecastTextView" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/salaryTextViewList" />
 
     <View
         android:id="@+id/divider"

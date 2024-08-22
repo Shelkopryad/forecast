@@ -23,9 +23,6 @@
         <action
             android:id="@+id/action_MainFragment_to_newExpense"
             app:destination="@id/newExpense" />
-        <action
-            android:id="@+id/action_MainFragment_to_yearForecast"
-            app:destination="@id/yearForecast" />
     </fragment>
 
     <fragment
@@ -69,17 +66,6 @@
 
         <action
             android:id="@+id/action_newExpense_to_MainFragment"
-            app:destination="@id/MainFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/yearForecast"
-        android:name="com.example.incomecalculator.YearForecast"
-        android:label="@string/year_forecast"
-        tools:layout="@layout/year_forecast" >
-
-        <action
-            android:id="@+id/action_yearForecast_to_MainFragment"
             app:destination="@id/MainFragment" />
     </fragment>
 </navigation>

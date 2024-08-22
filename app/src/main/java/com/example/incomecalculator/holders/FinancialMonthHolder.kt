@@ -20,14 +20,9 @@ class FinancialMonthHolder(
             financialMonth.monthlySalary
         )
 
-        binding.forecastTextView.text = context.getString(
-            R.string.forecast_text_view_history_fragment,
-            financialMonth.expenseForecast
-        )
-
         binding.actualExpenseTextView.text = context.getString(
             R.string.expenses_text_view_history_fragment,
-            financialMonth.expenseInFact
+            financialMonth.monthlyExpense
         )
     }
 }

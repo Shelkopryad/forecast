@@ -118,7 +118,7 @@ class NewExpense : Fragment() {
 
             DatabaseRepository.get().updateFinancialMonth(
                 currentMonth.id,
-                currentMonth.expenseInFact.plus(expense)
+                currentMonth.monthlyExpense.plus(expense)
             )
         }
     }

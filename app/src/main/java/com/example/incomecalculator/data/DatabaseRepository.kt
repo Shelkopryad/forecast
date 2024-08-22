@@ -20,36 +20,32 @@ class DatabaseRepository private constructor(context: Context) {
     fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>> =
         database.financialMonthDao().getFinancialMonthsFlow()
 
-    suspend fun getFinancialMonths(): List<FinancialMonth> =
-        database.financialMonthDao().getFinancialMonths()
-
     fun getLastFinancialMonthFlow(): Flow<FinancialMonth> =
         database.financialMonthDao().getLastFinancialMonthFlow()
 
     suspend fun getLastFinancialMonth(): FinancialMonth =
         database.financialMonthDao().getLastFinancialMonth()
 
-    suspend fun getFinancialMonthsByYear(
+    fun getFinancialMonthsByYear(
         startDate: String,
         finishDate: String
-    ): List<FinancialMonth> =
+    ): Flow<List<FinancialMonth>> =
         database.financialMonthDao().getFinancialMonthsByYear(startDate, finishDate)
 
     suspend fun newFinancialMonth(
         date: String,
         monthlySalary: BigDecimal,
-        expenseForecast: BigDecimal,
-        expenseInFact: BigDecimal
+        monthlyExpense: BigDecimal
     ) = database
         .financialMonthDao()
-        .newFinancialMonth(date, monthlySalary, expenseForecast, expenseInFact)
+        .newFinancialMonth(date, monthlySalary, monthlyExpense)
 
     suspend fun updateFinancialMonth(
         id: Int,
-        expenseInFact: BigDecimal
+        monthlyExpense: BigDecimal
     ) = database
         .financialMonthDao()
-        .updateFinancialMonth(id, expenseInFact)
+        .updateFinancialMonth(id, monthlyExpense)
 
     suspend fun newDailyExpense(
         date: String,

@@ -29,27 +29,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.history -> {
-                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_MainFragment_to_HistoryOfAllFragment)
-                true
-            }
-
-            R.id.yearForecast -> {
-                findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_MainFragment_to_yearForecast)
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)

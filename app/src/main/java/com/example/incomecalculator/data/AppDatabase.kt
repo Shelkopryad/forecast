@@ -7,7 +7,7 @@ import com.example.incomecalculator.dao.CategoryDao
 import com.example.incomecalculator.dao.DailyExpenseDao
 import com.example.incomecalculator.dao.FinancialMonthDao
 
-@Database(entities = [FinancialMonth::class, DailyExpense::class, Category::class], version = 5)
+@Database(entities = [FinancialMonth::class, DailyExpense::class, Category::class], version = 6)
 @TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun financialMonthDao(): FinancialMonthDao
