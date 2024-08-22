@@ -1,7 +1,6 @@
 package com.example.incomecalculator
 
 import android.os.Bundle
-import android.util.TimeUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
 import com.example.incomecalculator.databinding.MainFragmentBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.sql.Time
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.util.Date
 import java.util.Locale
 
 class MainFragment : Fragment() {
@@ -58,9 +53,13 @@ class MainFragment : Fragment() {
                                 .lowercase()
 
                             val incomeForecast = financialMonths
-                                .sumOf { it.monthlySalary } / BigDecimal(financialMonths.size) * BigDecimal(12)
+                                .sumOf { it.monthlySalary } / BigDecimal(financialMonths.size) * BigDecimal(
+                                12
+                            )
                             val expenseForecast = financialMonths
-                                .sumOf { it.monthlyExpense } / BigDecimal(financialMonths.size) * BigDecimal(12)
+                                .sumOf { it.monthlyExpense } / BigDecimal(financialMonths.size) * BigDecimal(
+                                12
+                            )
                             val finalIncome = incomeForecast - expenseForecast
 
                             binding.monthIncomeValue.text =

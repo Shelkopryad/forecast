@@ -2,7 +2,7 @@
     <string name="app_name">Income Forecast</string>
 
     <!-- main fragment -->
-    <string name="main_fragment_label">Forecast for current Month</string>
+    <string name="main_fragment_label">Finances</string>
     <string name="salary_text_view">Income</string>
     <string name="salary_month_value">Month (%1$s): <b>€%2$s</b></string>
     <string name="salary_year_value">Year:  <b>€%1$s</b></string>
@@ -10,7 +10,6 @@
     <string name="expense_month_value">Month: <b>€%1$s</b></string>
     <string name="expense_year_values">Year:  <b>€%1$s</b></string>
 
-    <string name="by_category">By category:</string>
     <string name="to_add_expense"><u>Add expenses</u></string>
     <string name="start_next_month_btn"><u>Start next month</u></string>
     <string name="history_of_current_month_btn"><u>View in details</u></string>
@@ -27,7 +26,6 @@
     <!-- history fragment -->
     <string name="history_fragment_label">History</string>
     <string name="earned_text_view_history_fragment">Earned on <i>%1$s %2$s</i>: <b>€%3$s</b></string>
-    <string name="forecast_text_view_history_fragment">Forecast: <b>€%1$s</b></string>
     <string name="expenses_text_view_history_fragment">Spent: <b>€%1$s</b></string>
 
     <!-- month expenses fragment -->
@@ -42,7 +40,4 @@
     <string name="expense_category_label">Category:</string>
     <string name="not_enough_category">Not enough categories? Create new!</string>
     <string name="add_category_btn">Add</string>
-
-    <!-- menu -->
-    <string name="menu_history">History</string>
 </resources>

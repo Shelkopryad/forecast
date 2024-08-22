@@ -12,9 +12,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="@string/earned_text_view_history_fragment"
-        app:layout_constraintBottom_toTopOf="@+id/forecastTextView"
-        app:layout_constraintEnd_toEndOf="@+id/forecastTextView"
-        app:layout_constraintStart_toStartOf="@+id/forecastTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
