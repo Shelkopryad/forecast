@@ -1,6 +1,5 @@
 package com.example.incomecalculator
 
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
-import com.example.incomecalculator.data.FinancialMonth
 import com.example.incomecalculator.databinding.FragmentNewMonthBinding
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -25,9 +22,6 @@ class NewMonth : Fragment() {
     private var _binding: FragmentNewMonthBinding? = null
 
     private val binding get() = _binding!!
-
-    private val dateFormat = SimpleDateFormat(PATTERN)
-    private val calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

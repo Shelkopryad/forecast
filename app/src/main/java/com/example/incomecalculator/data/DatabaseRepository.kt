@@ -20,9 +20,6 @@ class DatabaseRepository private constructor(context: Context) {
     fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>> =
         database.financialMonthDao().getFinancialMonthsFlow()
 
-    fun getLastFinancialMonthFlow(): Flow<FinancialMonth> =
-        database.financialMonthDao().getLastFinancialMonthFlow()
-
     suspend fun getLastFinancialMonth(): FinancialMonth =
         database.financialMonthDao().getLastFinancialMonth()
 
