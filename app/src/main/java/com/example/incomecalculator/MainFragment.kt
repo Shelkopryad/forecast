@@ -134,21 +134,4 @@ class MainFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    fun makeForecast(financialMonths: List<FinancialMonth>): BigDecimal {
-        val firstFinMonthDate = LocalDate
-            .parse(financialMonths.first().date, DateTimeFormatter.ISO_LOCAL_DATE)
-
-
-
-
-
-
-
-
-        return financialMonths
-            .sumOf { it.monthlySalary } / BigDecimal(financialMonths.size) * BigDecimal(
-            12
-        )
-    }
 }
