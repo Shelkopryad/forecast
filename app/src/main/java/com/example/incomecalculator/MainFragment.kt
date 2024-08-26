@@ -10,7 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.incomecalculator.data.DatabaseRepository
+import com.example.incomecalculator.data.FinancialMonth
 import com.example.incomecalculator.databinding.MainFragmentBinding
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -38,27 +40,36 @@ class MainFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val currentYear = LocalDate.now().year
+                val initialIncome = DatabaseRepository
+                    .get()
+                    .getInitialIncome().takeIf { it != null }
+                    ?.initialIncome
+
                 DatabaseRepository
                     .get()
                     .getFinancialMonthsByYear("$currentYear-01-01", "$currentYear-12-31")
                     .collect { financialMonths ->
                         if (financialMonths.isNotEmpty()) {
                             val lastFinancialMonth = financialMonths.maxBy { it.date }
-                            val yearlyIncome = financialMonths.sumOf { it.monthlySalary }
+                            val yearlyIncome = financialMonths.sumOf { it.monthlySalary } + initialIncome!!
                             val yearlyExpense = financialMonths.sumOf { it.monthlyExpense }
                             val lastFinMonthDate = LocalDate
                                 .parse(lastFinancialMonth.date, DateTimeFormatter.ISO_LOCAL_DATE)
                                 .month
                                 .getDisplayName(TextStyle.FULL, Locale.ENGLISH)
                                 .lowercase()
+                            val firstFinMonthDate = LocalDate
+                                .parse(financialMonths.minBy { it.date }.date, DateTimeFormatter.ISO_LOCAL_DATE)
+                                .month
+                                .value
 
                             val incomeForecast = financialMonths
                                 .sumOf { it.monthlySalary } / BigDecimal(financialMonths.size) * BigDecimal(
-                                12
-                            )
+                                12 - firstFinMonthDate
+                            ) + initialIncome
                             val expenseForecast = financialMonths
                                 .sumOf { it.monthlyExpense } / BigDecimal(financialMonths.size) * BigDecimal(
-                                12
+                                12 - firstFinMonthDate
                             )
                             val finalIncome = incomeForecast - expenseForecast
 
@@ -122,5 +133,22 @@ class MainFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun makeForecast(financialMonths: List<FinancialMonth>): BigDecimal {
+        val firstFinMonthDate = LocalDate
+            .parse(financialMonths.first().date, DateTimeFormatter.ISO_LOCAL_DATE)
+
+
+
+
+
+
+
+
+        return financialMonths
+            .sumOf { it.monthlySalary } / BigDecimal(financialMonths.size) * BigDecimal(
+            12
+        )
     }
 }

@@ -55,5 +55,22 @@ class NewMonth : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+
+        binding.addInitialIncomeBtn.setOnClickListener {
+            val income = BigDecimal(binding.initialIncomeTextView.text.toString())
+
+            lifecycleScope.launch {
+                DatabaseRepository
+                    .get()
+                    .addInitialIncome(income)
+            }
+
+            findNavController().navigate(R.id.action_newMonth_to_MainFragment)
+            Toast.makeText(
+                binding.root.context,
+                "Initial income added",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

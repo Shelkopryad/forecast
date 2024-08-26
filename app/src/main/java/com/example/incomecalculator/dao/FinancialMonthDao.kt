@@ -21,7 +21,7 @@ interface FinancialMonthDao {
     @Query("SELECT * FROM financial_months WHERE id = (:id)")
     fun getFinancialMonth(id: Int): Flow<FinancialMonth>
 
-    @Query("SELECT * FROM financial_months WHERE date BETWEEN :startDate AND :finishDate")
+    @Query("SELECT * FROM financial_months WHERE date BETWEEN :startDate AND :finishDate ORDER BY date")
     fun getFinancialMonthsByYear(startDate: String, finishDate: String): Flow<List<FinancialMonth>>
 
     @Query("INSERT INTO financial_months (date, monthly_salary, monthly_expense) VALUES (:date, :monthlySalary, :monthlyExpense)")

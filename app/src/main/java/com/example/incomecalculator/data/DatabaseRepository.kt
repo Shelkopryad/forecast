@@ -17,6 +17,12 @@ class DatabaseRepository private constructor(context: Context) {
         .fallbackToDestructiveMigration()
         .build()
 
+    suspend fun addInitialIncome(initialIncome: BigDecimal) =
+        database.initialIncomeDao().addInitialIncome(initialIncome)
+
+    suspend fun getInitialIncome(): InitialIncome =
+        database.initialIncomeDao().getInitialIncome()
+
     fun getFinancialMonthsFlow(): Flow<List<FinancialMonth>> =
         database.financialMonthDao().getFinancialMonthsFlow()
 
