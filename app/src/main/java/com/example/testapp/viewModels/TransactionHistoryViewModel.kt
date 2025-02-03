@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.testapp.dao.Transaction
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.enums.Categories
+import com.example.testapp.enums.Types
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,7 +26,8 @@ class TransactionHistoryViewModel @Inject constructor(
     private val transactionDao: TransactionDao
 ) : ViewModel() {
     val transactions = mutableStateOf<List<Transaction>>(emptyList())
-    val selectedType = mutableStateOf("all")
+    val selectedType = mutableStateOf(Types.ALL.type)
+    val currentMonthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -37,9 +40,13 @@ class TransactionHistoryViewModel @Inject constructor(
             )
     )
 
-    val selectedCategory = mutableStateOf("all")
+    val selectedCategory = mutableStateOf(Categories.ALL.category)
 
-    val types = listOf("all", "income", "expense")
+    val types = listOf(
+        Types.ALL.type,
+        Types.INCOME.type,
+        Types.EXPENSE.type
+    )
     val months = Month.entries.map {
         it.getDisplayName(
             TextStyle.FULL,
@@ -47,7 +54,14 @@ class TransactionHistoryViewModel @Inject constructor(
         )
     }
 
-    val categories = listOf("all", "rent", "food", "pets", "entertainment", "other")
+    val categories = listOf(
+        Categories.ALL.category,
+        Categories.RENT.category,
+        Categories.FOOD.category,
+        Categories.PETS.category,
+        Categories.ENTERTAINMENT.category,
+        Categories.OTHER.category
+    )
 
     init {
         viewModelScope.launch {
@@ -58,6 +72,7 @@ class TransactionHistoryViewModel @Inject constructor(
                     transactions.value = filteredTransactions.map {
                         it.toTransaction()
                     }
+                    updateCurrentMonthExpensesByCategory(transactions.value)
                 }
         }
     }
@@ -80,6 +95,28 @@ class TransactionHistoryViewModel @Inject constructor(
         updateTransactions()
     }
 
+    private fun updateCurrentMonthExpensesByCategory(transactions: List<Transaction>) {
+        val currentMonth = LocalDate.now().month.getDisplayName(
+            TextStyle.FULL,
+            Locale.getDefault()
+        )
+        val currentYear = LocalDate.now().year
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val monthlyExpenses = transactions.filter {
+            val date = LocalDate.parse(it.date, formatter)
+            date.month.getDisplayName(
+                TextStyle.FULL,
+                Locale.getDefault()
+            ) == currentMonth && date.year == currentYear && it.type == Types.EXPENSE.type
+        }
+
+        val expensesByCategory = monthlyExpenses.groupBy { it.category }
+            .mapValues { entry -> entry.value.sumOf { it.amount } }
+            .toList()
+
+        currentMonthExpensesByCategory.value = expensesByCategory
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateTransactions() {
         viewModelScope.launch {
@@ -98,7 +135,7 @@ class TransactionHistoryViewModel @Inject constructor(
     private fun filterTransactions(transactionEntities: List<TransactionEntity>): List<TransactionEntity> {
         return transactionEntities.filter { transactionEntity ->
             val isTypeMatch =
-                selectedType.value == "all" || transactionEntity.type == selectedType.value
+                selectedType.value == Types.ALL.type || transactionEntity.type == selectedType.value
 
             val transactionMonth = LocalDate.parse(
                 transactionEntity.date,
@@ -116,7 +153,7 @@ class TransactionHistoryViewModel @Inject constructor(
             val isMonthMatch = selectedMonth.value == transactionMonth
 
             val isCategoryMatch =
-                selectedCategory.value == "all" || transactionEntity.category == selectedCategory.value
+                selectedCategory.value == Types.ALL.type || transactionEntity.category == selectedCategory.value
 
             isTypeMatch && isMonthMatch && isYearMatch && isCategoryMatch
         }

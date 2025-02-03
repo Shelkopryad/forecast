@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.enums.Categories
+import com.example.testapp.enums.Types
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -53,7 +55,13 @@ fun AddTransactionScreen(
 
     var category by remember { mutableStateOf("") }
     var expandedCategory by remember { mutableStateOf(false) }
-    val categories = listOf("rent", "food", "pets", "entertainment", "other")
+    val categories = listOf(
+        Categories.RENT.category,
+        Categories.FOOD.category,
+        Categories.PETS.category,
+        Categories.ENTERTAINMENT.category,
+        Categories.OTHER.category
+    )
 
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf(LocalDate.now()) }
@@ -201,11 +209,11 @@ fun AddTransactionScreen(
                     return@Button
                 }
 
-                val categoryValue = if (type == "income") {
+                val categoryValue = if (type == Types.INCOME.type) {
                     "salary"
                 } else {
                     category.ifEmpty {
-                        "other"
+                        Categories.OTHER.category
                     }
                 }
 
