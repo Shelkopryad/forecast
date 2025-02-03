@@ -3,6 +3,7 @@ package com.example.testapp
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,11 +38,13 @@ fun TransactionHistoryScreen(
     val transactions = viewModel.transactions.value
     var expandedType by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
+    var expandedCategory by remember { mutableStateOf(false) }
     val selectedType = viewModel.selectedType.value
     val selectedMonth = viewModel.selectedMonth.value
+    val selectedCategory = viewModel.selectedCategory.value
     val types = viewModel.types
     val months = viewModel.months
-
+    val categories = viewModel.categories
 
     Column(
         modifier = modifier
@@ -54,39 +57,6 @@ fun TransactionHistoryScreen(
             modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.headlineMedium
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ExposedDropdownMenuBox(
-            expanded = expandedType,
-            onExpandedChange = { expandedType = !expandedType }
-        ) {
-            TextField(
-                value = selectedType,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
-                label = { Text("Type") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-
-            )
-            ExposedDropdownMenu(
-                expanded = expandedType,
-                onDismissRequest = { expandedType = false }
-            ) {
-                types.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        text = { Text(text = selectionOption) },
-                        onClick = {
-                            viewModel.onTypeSelected(selectionOption)
-                            expandedType = false
-                        }
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -118,6 +88,81 @@ fun TransactionHistoryScreen(
                     )
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expandedType,
+                onExpandedChange = { expandedType = !expandedType },
+                modifier = Modifier.weight(1f)
+            ) {
+                TextField(
+                    value = selectedType,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
+                    label = { Text("Type") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedType,
+                    onDismissRequest = { expandedType = false }
+                ) {
+                    types.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(text = selectionOption) },
+                            onClick = {
+                                viewModel.onTypeSelected(selectionOption)
+                                expandedType = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            if (selectedType == "expense") {
+                Spacer(modifier = Modifier.weight(0.1f))
+
+                ExposedDropdownMenuBox(
+                    expanded = expandedCategory,
+                    onExpandedChange = { expandedCategory = !expandedCategory },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    TextField(
+                        value = selectedCategory,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
+                        label = { Text("Category") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }
+                    ) {
+                        categories.forEach { selectionOption ->
+                            DropdownMenuItem(
+                                text = { Text(text = selectionOption) },
+                                onClick = {
+                                    viewModel.onCategorySelected(selectionOption)
+                                    expandedCategory = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+
         }
 
         Spacer(modifier = Modifier.height(8.dp))

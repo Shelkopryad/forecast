@@ -36,6 +36,9 @@ class TransactionHistoryViewModel @Inject constructor(
                 Locale.getDefault()
             )
     )
+
+    val selectedCategory = mutableStateOf("all")
+
     val types = listOf("all", "income", "expense")
     val months = Month.entries.map {
         it.getDisplayName(
@@ -43,6 +46,8 @@ class TransactionHistoryViewModel @Inject constructor(
             Locale.getDefault()
         )
     }
+
+    val categories = listOf("all", "rent", "food", "pets", "entertainment", "other")
 
     init {
         viewModelScope.launch {
@@ -70,6 +75,12 @@ class TransactionHistoryViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun onCategorySelected(category: String) {
+        selectedCategory.value = category
+        updateTransactions()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateTransactions() {
         viewModelScope.launch {
             transactionDao
@@ -88,6 +99,7 @@ class TransactionHistoryViewModel @Inject constructor(
         return transactionEntities.filter { transactionEntity ->
             val isTypeMatch =
                 selectedType.value == "all" || transactionEntity.type == selectedType.value
+
             val transactionMonth = LocalDate.parse(
                 transactionEntity.date,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -95,12 +107,18 @@ class TransactionHistoryViewModel @Inject constructor(
                 TextStyle.FULL,
                 Locale.getDefault()
             )
+
             val isYearMatch = LocalDate.now().year == LocalDate.parse(
                 transactionEntity.date,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd")
             ).year
+
             val isMonthMatch = selectedMonth.value == transactionMonth
-            isTypeMatch && isMonthMatch && isYearMatch
+
+            val isCategoryMatch =
+                selectedCategory.value == "all" || transactionEntity.category == selectedCategory.value
+
+            isTypeMatch && isMonthMatch && isYearMatch && isCategoryMatch
         }
     }
 }

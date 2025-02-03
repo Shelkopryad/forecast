@@ -1,7 +1,6 @@
 package com.example.testapp
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import com.example.testapp.dao.Transaction
 import com.example.testapp.viewModels.MainScreenViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -170,8 +168,8 @@ fun TransactionCard(transaction: Transaction) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "${transaction.type}: ${transaction.amount}, category: ${transaction.category}",
-                style = MaterialTheme.typography.bodyMedium
+                text = "${if (transaction.type == "income") "+" else "-"}${transaction.amount}${if (transaction.type == "income") "" else ": ${transaction.category}"}",
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }

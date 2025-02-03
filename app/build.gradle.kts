@@ -67,7 +67,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx.v262)
 
     implementation(libs.hilt.android)
-    ksp("com.google.dagger:hilt-compiler:2.48.1")
-
-    implementation("com.github.tehras:charts:0.8.0")
+    ksp(libs.hilt.compiler)
 }

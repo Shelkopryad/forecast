@@ -5,6 +5,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -86,64 +87,70 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ExposedDropdownMenuBox(
-            expanded = expandedType,
-            onExpandedChange = { expandedType = !expandedType }
-        ) {
-            TextField(
-                value = type,
-                onValueChange = { type = it },
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
-                label = { Text("Type") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-            )
-            ExposedDropdownMenu(
+        Row {
+            ExposedDropdownMenuBox(
                 expanded = expandedType,
-                onDismissRequest = { expandedType = false }
+                onExpandedChange = { expandedType = !expandedType },
+                modifier = Modifier.weight(1f)
             ) {
-                types.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        text = { Text(selectionOption) },
-                        onClick = {
-                            type = selectionOption
-                            expandedType = false
-                        }
-                    )
+                TextField(
+                    value = type,
+                    onValueChange = { type = it },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
+                    label = { Text("Type") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedType,
+                    onDismissRequest = { expandedType = false }
+                ) {
+                    types.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(selectionOption) },
+                            onClick = {
+                                type = selectionOption
+                                expandedType = false
+                            }
+                        )
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            if (type == "expense") {
+                Spacer(modifier = Modifier.weight(0.1f))
 
-        ExposedDropdownMenuBox(
-            expanded = expandedCategory,
-            onExpandedChange = { expandedCategory = !expandedCategory }
-        ) {
-            TextField(
-                value = category,
-                onValueChange = { category = it },
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
-                label = { Text("Category") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = expandedCategory,
-                onDismissRequest = { expandedCategory = false }
-            ) {
-                categories.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        text = { Text(selectionOption) },
-                        onClick = {
-                            category = selectionOption
-                            expandedCategory = false
-                        }
+                ExposedDropdownMenuBox(
+                    expanded = expandedCategory,
+                    onExpandedChange = { expandedCategory = !expandedCategory },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    TextField(
+                        value = category,
+                        onValueChange = { category = it },
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
+                        label = { Text("Category") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
                     )
+                    ExposedDropdownMenu(
+                        expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }
+                    ) {
+                        categories.forEach { selectionOption ->
+                            DropdownMenuItem(
+                                text = { Text(selectionOption) },
+                                onClick = {
+                                    category = selectionOption
+                                    expandedCategory = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -194,12 +201,13 @@ fun AddTransactionScreen(
                     return@Button
                 }
 
-                val categoryValue = if (category.isEmpty()) {
-                    "other"
+                val categoryValue = if (type == "income") {
+                    "salary"
                 } else {
-                    category
+                    category.ifEmpty {
+                        "other"
+                    }
                 }
-
 
                 val transactionEntity = TransactionEntity(
                     type = type,
