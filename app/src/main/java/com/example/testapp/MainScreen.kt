@@ -155,23 +155,3 @@ fun calculateMonthlyExpense(
         date.monthValue == currentMonth && date.year == currentYear && it.type == "expense"
     }.sumOf { it.amount }
 }
-
-@Composable
-fun TransactionCard(transaction: Transaction) {
-    Row(modifier = Modifier.padding(all = 8.dp)) {
-        Column {
-            Text(
-                text = transaction.date,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "${if (transaction.type == "income") "+" else "-"}${transaction.amount}${if (transaction.type == "income") "" else ": ${transaction.category}"}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }
-}
-
