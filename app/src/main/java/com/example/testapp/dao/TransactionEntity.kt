@@ -12,3 +12,13 @@ data class TransactionEntity(
     @ColumnInfo(name = "amount") val amount: Double,
     @ColumnInfo(name = "date") val date: String
 )
+
+fun TransactionEntity.toTransaction(): Transaction {
+    return Transaction(
+        id = id,
+        type = type,
+        category = category,
+        amount = amount,
+        date = date
+    )
+}

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.testapp.dao.Transaction
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.dao.toTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,7 +37,6 @@ class MainScreenViewModel @Inject constructor(
     }
 
     fun deleteTransaction(transaction: Transaction) {
-        Log.d("MainScreenViewModel", "Deleting transaction: $transaction")
         viewModelScope.launch {
             val transactionEntity = TransactionEntity(
                 id = transaction.id,
@@ -49,14 +49,4 @@ class MainScreenViewModel @Inject constructor(
             transactionDao.deleteTransaction(transactionEntity)
         }
     }
-}
-
-fun TransactionEntity.toTransaction(): Transaction {
-    return Transaction(
-        id = id,
-        type = type,
-        category = category,
-        amount = amount,
-        date = date
-    )
 }

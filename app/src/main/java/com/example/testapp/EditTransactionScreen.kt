@@ -2,6 +2,7 @@ package com.example.testapp
 
 import android.app.DatePickerDialog
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,10 +34,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.testapp.dao.Transaction
 import com.example.testapp.dao.TransactionDao
-import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.dao.toTransaction
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -45,18 +49,40 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionScreen(
+fun EditTransactionScreen(
+    transactionId: Int,
     navController: NavController,
     transactionDao: TransactionDao
 ) {
+
     var type by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+
+    var transaction by remember { mutableStateOf<Transaction?>(null) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(transactionId) {
+        coroutineScope.launch {
+            transaction = transactionDao.getTransactionsById(transactionId).first().toTransaction()
+            Log.d("EditScreenViewModel", "Selected transaction: ${transaction}")
+            type = transaction?.type ?: ""
+            category = transaction?.category ?: ""
+            amount = transaction?.amount.toString()
+            date = transaction?.date ?: ""
+        }
+    }
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     var expandedType by remember { mutableStateOf(false) }
     val types = listOf(
         Types.INCOME.type,
         Types.EXPENSE.type
     )
 
-    var category by remember { mutableStateOf("") }
     var expandedCategory by remember { mutableStateOf(false) }
     val categories = listOf(
         Categories.RENT.category,
@@ -65,12 +91,6 @@ fun AddTransactionScreen(
         Categories.ENTERTAINMENT.category,
         Categories.OTHER.category
     )
-
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf(LocalDate.now()) }
-
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -81,7 +101,7 @@ fun AddTransactionScreen(
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
-            date = LocalDate.of(year, month + 1, dayOfMonth)
+            date = LocalDate.of(year, month + 1, dayOfMonth).toString()
         }, year, month, day
     )
 
@@ -92,7 +112,7 @@ fun AddTransactionScreen(
             .systemBarsPadding()
     ) {
         Text(
-            text = "Add Transaction",
+            text = "Edit Transaction",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -186,7 +206,7 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Date: ${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}")
+        Text(text = "Date: ${date.format(formatter)}")
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -220,15 +240,14 @@ fun AddTransactionScreen(
                     }
                 }
 
-                val transactionEntity = TransactionEntity(
-                    type = type,
-                    category = categoryValue,
-                    amount = amountDouble,
-                    date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                )
-
                 coroutineScope.launch {
-                    transactionDao.insertTransaction(transactionEntity)
+                    transactionDao.editTransaction(
+                        type,
+                        categoryValue,
+                        amountDouble,
+                        date.format(formatter),
+                        transactionId
+                    )
                     navController.popBackStack()
                 }
             }

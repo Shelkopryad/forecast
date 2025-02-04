@@ -104,6 +104,13 @@ fun MainScreen(
                                 }
                             ) {
                                 DropdownMenuItem(
+                                    text = { Text("Edit") },
+                                    onClick = {
+                                        navController.navigate("edit/${transaction.id}")
+                                        viewModel.showContextMenu.value = false
+                                    }
+                                )
+                                DropdownMenuItem(
                                     text = { Text("Delete") },
                                     onClick = {
                                         viewModel.deleteTransaction(transaction)

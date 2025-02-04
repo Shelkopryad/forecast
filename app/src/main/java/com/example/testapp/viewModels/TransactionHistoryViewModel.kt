@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.testapp.dao.Transaction
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.dao.toTransaction
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,7 @@ class TransactionHistoryViewModel @Inject constructor(
     val transactions = mutableStateOf<List<Transaction>>(emptyList())
     val selectedType = mutableStateOf(Types.ALL.type)
     val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(

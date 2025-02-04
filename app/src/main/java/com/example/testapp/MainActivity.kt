@@ -2,6 +2,7 @@ package com.example.testapp
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.ui.theme.TestappTheme
 import com.example.testapp.viewModels.MainScreenViewModel
@@ -40,8 +43,7 @@ class MainActivity : ComponentActivity() {
                 val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
 
                 NavHost(
-                    navController = navController,
-                    startDestination = "main"
+                    navController = navController, startDestination = "main"
                 ) {
                     composable("main") {
                         Scaffold(
@@ -68,10 +70,26 @@ class MainActivity : ComponentActivity() {
                         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                             TransactionHistoryScreen(
                                 viewModel = transactionHistoryViewModel,
-                                modifier = Modifier
-                                    .padding(innerPadding)
+                                modifier = Modifier.padding(innerPadding)
                             )
                         }
+                    }
+
+                    composable(
+                        route = "edit/{transactionId}",
+                        arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
+                    ) { backStackEntry ->
+                        val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: 0
+
+                        Log.d(
+                            "MainActivity",
+                            "Navigating to EditTransactionScreen with $transactionId"
+                        )
+                        EditTransactionScreen(
+                            transactionId = transactionId,
+                            navController = navController,
+                            transactionDao = transactionDao
+                        )
                     }
                 }
             }
