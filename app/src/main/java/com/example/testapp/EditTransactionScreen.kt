@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.testapp.dao.Transaction
 import com.example.testapp.dao.TransactionDao
+import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.dao.toTransaction
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
@@ -242,11 +243,13 @@ fun EditTransactionScreen(
 
                 coroutineScope.launch {
                     transactionDao.editTransaction(
-                        type,
-                        categoryValue,
-                        amountDouble,
-                        date.format(formatter),
-                        transactionId
+                        TransactionEntity(
+                            id = transactionId,
+                            type = type,
+                            category = categoryValue,
+                            amount = amountDouble,
+                            date = date
+                        )
                     )
                     navController.popBackStack()
                 }

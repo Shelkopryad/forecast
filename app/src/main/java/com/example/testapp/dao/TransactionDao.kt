@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,6 +22,6 @@ interface TransactionDao {
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
 
-    @Query("UPDATE transactions SET type = :type, category = :category, amount = :amount, date = :date WHERE id = :id")
-    suspend fun editTransaction(type: String, category: String, amount: Double, date: String, id: Int)
+    @Update
+    suspend fun editTransaction(transaction: TransactionEntity)
 }
