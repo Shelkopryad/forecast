@@ -1,6 +1,7 @@
 package com.example.testapp.viewModels
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -29,6 +30,8 @@ class TransactionHistoryViewModel @Inject constructor(
     val transactions = mutableStateOf<List<Transaction>>(emptyList())
     val selectedType = mutableStateOf(Types.ALL.type)
     val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
+    val showContextMenu = mutableStateOf(false)
+    val selectedTransaction = mutableStateOf<Transaction?>(null)
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -97,6 +100,20 @@ class TransactionHistoryViewModel @Inject constructor(
     fun onCategorySelected(category: String) {
         selectedCategory.value = category
         updateTransactions()
+    }
+
+    fun deleteTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            val transactionEntity = TransactionEntity(
+                id = transaction.id,
+                type = transaction.type,
+                category = transaction.category,
+                amount = transaction.amount,
+                date = transaction.date
+            )
+            Log.d("TransactionHistoryViewModel", "Deleting transactionEntity: $transactionEntity")
+            transactionDao.deleteTransaction(transactionEntity)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -3,6 +3,7 @@ package com.example.testapp
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -29,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.testapp.enums.Categories
 import com.example.testapp.ui.theme.inversePrimaryLight
 import com.example.testapp.ui.theme.onSurfaceVariantLight
@@ -45,6 +48,7 @@ import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 @Composable
 fun TransactionHistoryScreen(
     viewModel: TransactionHistoryViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val transactions = viewModel.transactions.value.reversed()
@@ -58,6 +62,8 @@ fun TransactionHistoryScreen(
     val months = viewModel.months
     val categories = viewModel.categories
     val monthExpensesByCategory = viewModel.monthExpensesByCategory.value
+    val showContextMenu = viewModel.showContextMenu.value
+    val selectedTransaction = viewModel.selectedTransaction.value
 
     Log.d(
         "TransactionHistoryScreen", "monthExpensesByCategory: $monthExpensesByCategory"
@@ -259,7 +265,41 @@ fun TransactionHistoryScreen(
 
         LazyColumn {
             items(transactions) { transaction ->
-                TransactionCard(transaction = transaction)
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            viewModel.selectedTransaction.value = transaction
+                            viewModel.showContextMenu.value = true
+                        }
+                        .padding(8.dp)
+                ) {
+                    TransactionCard(transaction = transaction)
+
+                    if (showContextMenu && selectedTransaction == transaction) {
+                        DropdownMenu(
+                            expanded = showContextMenu,
+                            onDismissRequest = {
+                                viewModel.showContextMenu.value = false
+                            }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Edit") },
+                                onClick = {
+                                    navController.navigate("edit/${transaction.id}")
+                                    viewModel.showContextMenu.value = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Delete") },
+                                onClick = {
+                                    viewModel.deleteTransaction(transaction)
+                                    viewModel.showContextMenu.value = false
+                                }
+                            )
+                        }
+                    }
+                }
             }
         }
     }

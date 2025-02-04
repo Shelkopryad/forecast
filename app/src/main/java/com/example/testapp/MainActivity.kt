@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
                         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                             TransactionHistoryScreen(
                                 viewModel = transactionHistoryViewModel,
+                                navController = navController,
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
