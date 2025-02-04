@@ -1,5 +1,7 @@
 package com.example.testapp
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,26 +13,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.testapp.dao.Transaction
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionCard(transaction: Transaction) {
-    val text = if (transaction.type == "income") {
+    val amountString = if (transaction.type == "income") {
         "+${transaction.amount}"
     } else {
         "-${transaction.amount}: ${transaction.category}"
     }
 
+    val date = LocalDate.parse(transaction.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    val dateString = "${date.dayOfMonth} "
+        .plus(
+            date.month.getDisplayName(
+                TextStyle.FULL,
+                Locale.getDefault()
+            )
+        )
+        .plus(" ${date.year}")
+
     Row(modifier = Modifier.padding(all = 8.dp)) {
         Column {
             Text(
-                text = transaction.date,
+                text = dateString,
                 color = MaterialTheme.colorScheme.secondary
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = text,
+                text = amountString,
                 style = MaterialTheme.typography.bodyLarge
             )
         }

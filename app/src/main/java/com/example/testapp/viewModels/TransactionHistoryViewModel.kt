@@ -27,7 +27,8 @@ class TransactionHistoryViewModel @Inject constructor(
 ) : ViewModel() {
     val transactions = mutableStateOf<List<Transaction>>(emptyList())
     val selectedType = mutableStateOf(Types.ALL.type)
-    val currentMonthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
+    val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -47,12 +48,6 @@ class TransactionHistoryViewModel @Inject constructor(
         Types.INCOME.type,
         Types.EXPENSE.type
     )
-    val months = Month.entries.map {
-        it.getDisplayName(
-            TextStyle.FULL,
-            Locale.getDefault()
-        )
-    }
 
     val categories = listOf(
         Categories.ALL.category,
@@ -63,6 +58,13 @@ class TransactionHistoryViewModel @Inject constructor(
         Categories.OTHER.category
     )
 
+    val months = Month.entries.map {
+        it.getDisplayName(
+            TextStyle.FULL,
+            Locale.getDefault()
+        )
+    }
+
     init {
         viewModelScope.launch {
             transactionDao
@@ -72,7 +74,7 @@ class TransactionHistoryViewModel @Inject constructor(
                     transactions.value = filteredTransactions.map {
                         it.toTransaction()
                     }
-                    updateCurrentMonthExpensesByCategory(transactions.value)
+                    updateMonthExpensesByCategory()
                 }
         }
     }
@@ -87,34 +89,13 @@ class TransactionHistoryViewModel @Inject constructor(
     fun onMonthSelected(month: String) {
         selectedMonth.value = month
         updateTransactions()
+        updateMonthExpensesByCategory()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onCategorySelected(category: String) {
         selectedCategory.value = category
         updateTransactions()
-    }
-
-    private fun updateCurrentMonthExpensesByCategory(transactions: List<Transaction>) {
-        val currentMonth = LocalDate.now().month.getDisplayName(
-            TextStyle.FULL,
-            Locale.getDefault()
-        )
-        val currentYear = LocalDate.now().year
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val monthlyExpenses = transactions.filter {
-            val date = LocalDate.parse(it.date, formatter)
-            date.month.getDisplayName(
-                TextStyle.FULL,
-                Locale.getDefault()
-            ) == currentMonth && date.year == currentYear && it.type == Types.EXPENSE.type
-        }
-
-        val expensesByCategory = monthlyExpenses.groupBy { it.category }
-            .mapValues { entry -> entry.value.sumOf { it.amount } }
-            .toList()
-
-        currentMonthExpensesByCategory.value = expensesByCategory
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -139,7 +120,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val transactionMonth = LocalDate.parse(
                 transactionEntity.date,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                formatter
             ).month.getDisplayName(
                 TextStyle.FULL,
                 Locale.getDefault()
@@ -147,7 +128,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val isYearMatch = LocalDate.now().year == LocalDate.parse(
                 transactionEntity.date,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                formatter
             ).year
 
             val isMonthMatch = selectedMonth.value == transactionMonth
@@ -156,6 +137,34 @@ class TransactionHistoryViewModel @Inject constructor(
                 selectedCategory.value == Types.ALL.type || transactionEntity.category == selectedCategory.value
 
             isTypeMatch && isMonthMatch && isYearMatch && isCategoryMatch
+        }
+    }
+
+    private fun updateMonthExpensesByCategory() {
+        viewModelScope.launch {
+            transactionDao
+                .getAllTransactions()
+                .collectLatest { transactionEntities ->
+                    val currentYear = LocalDate.now().year
+
+                    val transactions = transactionEntities.map {
+                        it.toTransaction()
+                    }
+
+                    val monthlyExpenses = transactions.filter {
+                        val date = LocalDate.parse(it.date, formatter)
+                        date.month.getDisplayName(
+                            TextStyle.FULL,
+                            Locale.getDefault()
+                        ) == selectedMonth.value && date.year == currentYear && it.type == Types.EXPENSE.type
+                    }
+
+                    val expensesByCategory = monthlyExpenses.groupBy { it.category }
+                        .mapValues { entry -> entry.value.sumOf { it.amount } }
+                        .toList()
+
+                    monthExpensesByCategory.value = expensesByCategory
+                }
         }
     }
 }

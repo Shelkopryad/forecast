@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
@@ -37,6 +38,7 @@ import com.example.testapp.ui.theme.tertiaryLight
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
+import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,11 +57,10 @@ fun TransactionHistoryScreen(
     val types = viewModel.types
     val months = viewModel.months
     val categories = viewModel.categories
-    val currentMonthExpensesByCategory = viewModel.currentMonthExpensesByCategory.value
+    val monthExpensesByCategory = viewModel.monthExpensesByCategory.value
 
     Log.d(
-        "TransactionHistoryScreen",
-        "currentMonthExpensesByCategory: $currentMonthExpensesByCategory"
+        "TransactionHistoryScreen", "monthExpensesByCategory: $monthExpensesByCategory"
     )
 
     Column(
@@ -73,65 +74,6 @@ fun TransactionHistoryScreen(
             modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.headlineMedium
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (currentMonthExpensesByCategory.isNotEmpty()) {
-            Row {
-                Column {
-                    Text(
-                        text = "Current Month",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    currentMonthExpensesByCategory.forEach(
-                        {
-                            Text(
-                                text = "${it.first}: ${Math.round(it.second)}",
-                                color = when (it.first) {
-                                    Categories.RENT.category -> tertiaryLight
-                                    Categories.FOOD.category -> primaryLight
-                                    Categories.PETS.category -> onSurfaceVariantLight
-                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
-                                    Categories.OTHER.category -> inversePrimaryLight
-                                    else -> Color.Gray
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Column {
-                    val pieChartData = PieChartData(
-                        currentMonthExpensesByCategory.map {
-                            PieChartData.Slice(
-                                it.second.toFloat(),
-                                when (it.first) {
-                                    Categories.RENT.category -> tertiaryLight
-                                    Categories.FOOD.category -> primaryLight
-                                    Categories.PETS.category -> onSurfaceVariantLight
-                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
-                                    Categories.OTHER.category -> inversePrimaryLight
-                                    else -> Color.Gray
-                                }
-                            )
-                        }
-                    )
-
-                    PieChart(
-                        pieChartData = pieChartData,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -195,6 +137,7 @@ fun TransactionHistoryScreen(
                             text = { Text(text = selectionOption) },
                             onClick = {
                                 viewModel.onTypeSelected(selectionOption)
+                                viewModel.onCategorySelected(Categories.ALL.category)
                                 expandedType = false
                             }
                         )
@@ -237,6 +180,80 @@ fun TransactionHistoryScreen(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (monthExpensesByCategory.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 16.dp, start = 8.dp, end = 8.dp)
+                    .wrapContentHeight()
+
+            ) {
+                Column {
+                    Text(
+                        text = "Expenses in ".plus(selectedMonth),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    monthExpensesByCategory.forEach(
+                        {
+                            Text(
+                                text = "${it.first}: ${Math.round(it.second)}",
+                                color = when (it.first) {
+                                    Categories.RENT.category -> tertiaryLight
+                                    Categories.FOOD.category -> primaryLight
+                                    Categories.PETS.category -> onSurfaceVariantLight
+                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
+                                    Categories.OTHER.category -> inversePrimaryLight
+                                    else -> Color.Gray
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column {
+                    val pieChartData = PieChartData(
+                        monthExpensesByCategory.map {
+                            PieChartData.Slice(
+                                it.second.toFloat(),
+                                when (it.first) {
+                                    Categories.RENT.category -> tertiaryLight
+                                    Categories.FOOD.category -> primaryLight
+                                    Categories.PETS.category -> onSurfaceVariantLight
+                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
+                                    Categories.OTHER.category -> inversePrimaryLight
+                                    else -> Color.Gray
+                                }
+                            )
+                        }
+                    )
+
+                    PieChart(
+                        pieChartData = pieChartData,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        sliceDrawer = SimpleSliceDrawer(sliceThickness = 50f)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "All Transactions",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(start = 8.dp)
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
