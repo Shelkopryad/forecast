@@ -24,4 +24,10 @@ interface TransactionDao {
 
     @Update
     suspend fun editTransaction(transaction: TransactionEntity)
+
+    @Insert
+    suspend fun insertCategory(category: CategoryEntity)
+
+    @Query("SELECT * FROM categories")
+    fun getAllCategories(): Flow<List<CategoryEntity>>
 }

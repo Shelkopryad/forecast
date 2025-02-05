@@ -25,7 +25,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.testapp.dao.Transaction
+import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.enums.Types
 import com.example.testapp.viewModels.MainScreenViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -139,9 +140,9 @@ fun MainScreen(
     }
 }
 
-fun calculateBalance(transactions: List<Transaction>): Double {
+fun calculateBalance(transactions: List<TransactionEntity>): Double {
     return transactions.sumOf {
-        if (it.type == "income") {
+        if (it.type == Types.INCOME.type) {
             it.amount
         } else {
             -it.amount
@@ -151,7 +152,7 @@ fun calculateBalance(transactions: List<Transaction>): Double {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun calculateMonthlyExpense(
-    transactions: List<Transaction>
+    transactions: List<TransactionEntity>
 ): Double {
     val currentMonth = LocalDate.now().monthValue
     val currentYear = LocalDate.now().year
@@ -159,6 +160,6 @@ fun calculateMonthlyExpense(
 
     return transactions.filter {
         val date = LocalDate.parse(it.date, formatter)
-        date.monthValue == currentMonth && date.year == currentYear && it.type == "expense"
+        date.monthValue == currentMonth && date.year == currentYear && it.type == Types.EXPENSE.type
     }.sumOf { it.amount }
 }

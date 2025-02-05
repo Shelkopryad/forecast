@@ -33,11 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.testapp.enums.Categories
-import com.example.testapp.ui.theme.inversePrimaryLight
-import com.example.testapp.ui.theme.onSurfaceVariantLight
-import com.example.testapp.ui.theme.onTertiaryContainerLight
-import com.example.testapp.ui.theme.primaryLight
-import com.example.testapp.ui.theme.tertiaryLight
+import com.example.testapp.enums.Types
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
@@ -60,7 +56,7 @@ fun TransactionHistoryScreen(
     val selectedCategory = viewModel.selectedCategory.value
     val types = viewModel.types
     val months = viewModel.months
-    val categories = viewModel.categories
+    val categories = viewModel.categories.value
     val monthExpensesByCategory = viewModel.monthExpensesByCategory.value
     val showContextMenu = viewModel.showContextMenu.value
     val selectedTransaction = viewModel.selectedTransaction.value
@@ -151,7 +147,7 @@ fun TransactionHistoryScreen(
                 }
             }
 
-            if (selectedType == "expense") {
+            if (selectedType == Types.EXPENSE.type) {
                 Spacer(modifier = Modifier.weight(0.1f))
 
                 ExposedDropdownMenuBox(
@@ -175,9 +171,9 @@ fun TransactionHistoryScreen(
                     ) {
                         categories.forEach { selectionOption ->
                             DropdownMenuItem(
-                                text = { Text(text = selectionOption) },
+                                text = { Text(text = selectionOption.name) },
                                 onClick = {
-                                    viewModel.onCategorySelected(selectionOption)
+                                    viewModel.onCategorySelected(selectionOption.name)
                                     expandedCategory = false
                                 }
                             )
@@ -195,60 +191,48 @@ fun TransactionHistoryScreen(
                     .fillMaxWidth()
                     .padding(top = 16.dp, bottom = 16.dp, start = 8.dp, end = 8.dp)
                     .wrapContentHeight()
-
             ) {
                 Column {
-                    Text(
-                        text = "Expenses in ".plus(selectedMonth),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    Row {
+                        Text(
+                            text = "Expenses in ".plus(selectedMonth),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    monthExpensesByCategory.forEach(
-                        {
-                            Text(
-                                text = "${it.first}: ${Math.round(it.second)}",
-                                color = when (it.first) {
-                                    Categories.RENT.category -> tertiaryLight
-                                    Categories.FOOD.category -> primaryLight
-                                    Categories.PETS.category -> onSurfaceVariantLight
-                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
-                                    Categories.OTHER.category -> inversePrimaryLight
-                                    else -> Color.Gray
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Column {
-                    val pieChartData = PieChartData(
-                        monthExpensesByCategory.map {
-                            PieChartData.Slice(
-                                it.second.toFloat(),
-                                when (it.first) {
-                                    Categories.RENT.category -> tertiaryLight
-                                    Categories.FOOD.category -> primaryLight
-                                    Categories.PETS.category -> onSurfaceVariantLight
-                                    Categories.ENTERTAINMENT.category -> onTertiaryContainerLight
-                                    Categories.OTHER.category -> inversePrimaryLight
-                                    else -> Color.Gray
+                    Row {
+                        Column {
+                            monthExpensesByCategory.forEach(
+                                {
+                                    Text(
+                                        text = "${it.first}: ${Math.round(it.second)}",
+                                        color = colorFromCategoryName(it.first)
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             )
                         }
-                    )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Column {
+                            val pieChartData = PieChartData(
+                                monthExpensesByCategory.map {
+                                    PieChartData.Slice(
+                                        it.second.toFloat(),
+                                        colorFromCategoryName(it.first)
+                                    )
+                                }
+                            )
 
-                    PieChart(
-                        pieChartData = pieChartData,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp),
-                        sliceDrawer = SimpleSliceDrawer(sliceThickness = 50f)
-                    )
+                            PieChart(
+                                pieChartData = pieChartData,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp),
+                                sliceDrawer = SimpleSliceDrawer(sliceThickness = 50f)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -303,4 +287,12 @@ fun TransactionHistoryScreen(
             }
         }
     }
+}
+
+fun colorFromCategoryName(category: String): Color {
+    val hash = category.hashCode()
+    val r = (hash and 0xFF0000 shr 16).toFloat() / 255f
+    val g = (hash and 0x00FF00 shr 8).toFloat() / 255f
+    val b = (hash and 0x0000FF).toFloat() / 255f
+    return Color(r, g, b, 1f)
 }

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,12 +35,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.testapp.dao.Transaction
+import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
-import com.example.testapp.dao.toTransaction
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -61,18 +62,23 @@ fun EditTransactionScreen(
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
 
-    var transaction by remember { mutableStateOf<Transaction?>(null) }
+    var transaction by remember { mutableStateOf<TransactionEntity?>(null) }
+    val categories: MutableState<List<CategoryEntity>> = remember { mutableStateOf(emptyList()) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(transactionId) {
         coroutineScope.launch {
-            transaction = transactionDao.getTransactionsById(transactionId).first().toTransaction()
+            transaction = transactionDao.getTransactionsById(transactionId).first()
             Log.d("EditScreenViewModel", "Selected transaction: ${transaction}")
             type = transaction?.type ?: ""
             category = transaction?.category ?: ""
             amount = transaction?.amount.toString()
             date = transaction?.date ?: ""
+
+            transactionDao.getAllCategories().collectLatest {
+                categories.value = it.sortedBy { it.name }
+            }
         }
     }
 
@@ -85,13 +91,6 @@ fun EditTransactionScreen(
     )
 
     var expandedCategory by remember { mutableStateOf(false) }
-    val categories = listOf(
-        Categories.RENT.category,
-        Categories.FOOD.category,
-        Categories.PETS.category,
-        Categories.ENTERTAINMENT.category,
-        Categories.OTHER.category
-    )
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -173,11 +172,11 @@ fun EditTransactionScreen(
                         expanded = expandedCategory,
                         onDismissRequest = { expandedCategory = false }
                     ) {
-                        categories.forEach { selectionOption ->
+                        categories.value.forEach { selectionOption ->
                             DropdownMenuItem(
-                                text = { Text(selectionOption) },
+                                text = { Text(selectionOption.name) },
                                 onClick = {
-                                    category = selectionOption
+                                    category = selectionOption.name
                                     expandedCategory = false
                                 }
                             )

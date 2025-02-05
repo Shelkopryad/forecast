@@ -1,15 +1,23 @@
 package com.example.testapp.enums
 
+import com.example.testapp.dao.CategoryEntity
+
 enum class Categories(val category: String) {
     ALL("all"),
     RENT("rent"),
     FOOD("food"),
     PETS("pets"),
     ENTERTAINMENT("entertainment"),
+    TRAVEL("travel"),
     OTHER("other");
 
     companion object {
-        private val map = entries.associateBy(Categories::category)
-        fun fromString(category: String) = map[category]
+        fun getCategories(): List<CategoryEntity> {
+            return entries.map {
+                CategoryEntity(
+                    name = it.category
+                )
+            }
+        }
     }
 }

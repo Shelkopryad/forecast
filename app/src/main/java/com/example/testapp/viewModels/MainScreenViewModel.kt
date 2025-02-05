@@ -6,10 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testapp.dao.Transaction
-import com.example.testapp.dao.TransactionDao
+import com.example.testapp.dao.AppRepository
 import com.example.testapp.dao.TransactionEntity
-import com.example.testapp.dao.toTransaction
+import com.example.testapp.enums.Categories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -18,35 +17,30 @@ import javax.inject.Inject
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val transactionDao: TransactionDao
+    private val repository: AppRepository
 ) : ViewModel() {
-    val transactions = mutableStateOf<List<Transaction>>(emptyList())
+    val transactions = mutableStateOf<List<TransactionEntity>>(emptyList())
+    val categories = mutableStateOf(Categories.getCategories())
     val showContextMenu = mutableStateOf(false)
-    val selectedTransaction = mutableStateOf<Transaction?>(null)
+    val selectedTransaction = mutableStateOf<TransactionEntity?>(null)
 
     init {
         viewModelScope.launch {
-            transactionDao
-                .getAllTransactions()
-                .collectLatest { transactionEntities ->
-                    transactions.value = transactionEntities.map {
-                        it.toTransaction()
-                    }
-                }
+            repository.transactionsFlow.collectLatest {
+                transactions.value = it
+            }
+
+            repository.categoriesFlow.collectLatest {
+                categories.value = it
+            }
         }
+        Log.d("MainScreenViewModel", "Categories: ${categories.value}")
     }
 
-    fun deleteTransaction(transaction: Transaction) {
+    fun deleteTransaction(transactionEntity: TransactionEntity) {
         viewModelScope.launch {
-            val transactionEntity = TransactionEntity(
-                id = transaction.id,
-                type = transaction.type,
-                category = transaction.category,
-                amount = transaction.amount,
-                date = transaction.date
-            )
             Log.d("MainScreenViewModel", "Deleting transactionEntity: $transactionEntity")
-            transactionDao.deleteTransaction(transactionEntity)
+            repository.deleteTransaction(transactionEntity)
         }
     }
 }

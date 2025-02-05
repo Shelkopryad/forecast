@@ -12,7 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.testapp.dao.Transaction
+import com.example.testapp.dao.TransactionEntity
+import com.example.testapp.enums.Types
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -20,8 +21,8 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TransactionCard(transaction: Transaction) {
-    val amountString = if (transaction.type == "income") {
+fun TransactionCard(transaction: TransactionEntity) {
+    val amountString = if (transaction.type == Types.INCOME.type) {
         "+${transaction.amount}"
     } else {
         "-${transaction.amount}: ${transaction.category}"

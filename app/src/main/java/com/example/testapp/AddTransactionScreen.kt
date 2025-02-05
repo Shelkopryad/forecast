@@ -22,6 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,10 +34,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -46,31 +50,26 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
-    navController: NavController,
-    transactionDao: TransactionDao
+    navController: NavController, transactionDao: TransactionDao
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val categories: MutableState<List<CategoryEntity>> = remember { mutableStateOf(emptyList()) }
+
     var type by remember { mutableStateOf("") }
     var expandedType by remember { mutableStateOf(false) }
+    var showModalBottomSheet by remember { mutableStateOf(false) }
+
     val types = listOf(
-        Types.INCOME.type,
-        Types.EXPENSE.type
+        Types.INCOME.type, Types.EXPENSE.type
     )
 
     var category by remember { mutableStateOf("") }
     var expandedCategory by remember { mutableStateOf(false) }
-    val categories = listOf(
-        Categories.RENT.category,
-        Categories.FOOD.category,
-        Categories.PETS.category,
-        Categories.ENTERTAINMENT.category,
-        Categories.OTHER.category
-    )
 
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf(LocalDate.now()) }
-
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -79,11 +78,18 @@ fun AddTransactionScreen(
     calendar.time = Date()
 
     val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
+        context, { _, year, month, dayOfMonth ->
             date = LocalDate.of(year, month + 1, dayOfMonth)
         }, year, month, day
     )
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            transactionDao.getAllCategories().collectLatest {
+                categories.value = it.sortedBy { it.name }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -92,8 +98,7 @@ fun AddTransactionScreen(
             .systemBarsPadding()
     ) {
         Text(
-            text = "Add Transaction",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Add Transaction", style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -114,18 +119,13 @@ fun AddTransactionScreen(
                         .fillMaxWidth()
                         .menuAnchor()
                 )
-                ExposedDropdownMenu(
-                    expanded = expandedType,
-                    onDismissRequest = { expandedType = false }
-                ) {
+                ExposedDropdownMenu(expanded = expandedType,
+                    onDismissRequest = { expandedType = false }) {
                     types.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(selectionOption) },
-                            onClick = {
-                                type = selectionOption
-                                expandedType = false
-                            }
-                        )
+                        DropdownMenuItem(text = { Text(selectionOption) }, onClick = {
+                            type = selectionOption
+                            expandedType = false
+                        })
                     }
                 }
             }
@@ -148,20 +148,23 @@ fun AddTransactionScreen(
                             .fillMaxWidth()
                             .menuAnchor()
                     )
-                    ExposedDropdownMenu(
-                        expanded = expandedCategory,
-                        onDismissRequest = { expandedCategory = false }
-                    ) {
-                        categories.forEach { selectionOption ->
-                            DropdownMenuItem(
-                                text = { Text(selectionOption) },
-                                onClick = {
-                                    category = selectionOption
-                                    expandedCategory = false
-                                }
-                            )
+                    ExposedDropdownMenu(expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }) {
+                        categories.value.forEach { selectionOption ->
+                            DropdownMenuItem(text = { Text(selectionOption.name) }, onClick = {
+                                category = selectionOption.name
+                                expandedCategory = false
+                            })
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.weight(0.1f))
+
+                Button(onClick = {
+                    showModalBottomSheet = true
+                }) {
+                    Text(text = "+")
                 }
             }
         }
@@ -190,50 +193,57 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                if (type.isEmpty() || amount.isEmpty()) {
-                    Toast.makeText(
-                        context,
-                        "Please fill all fields",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@Button
-                }
+        Button(onClick = {
+            if (type.isEmpty() || amount.isEmpty()) {
+                Toast.makeText(
+                    context, "Please fill all fields", Toast.LENGTH_SHORT
+                ).show()
+                return@Button
+            }
 
-                val amountDouble = amount.toDoubleOrNull()
+            val amountDouble = amount.toDoubleOrNull()
 
-                if (amountDouble == null) {
-                    Toast.makeText(
-                        context,
-                        "Please enter a valid amount",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@Button
-                }
+            if (amountDouble == null) {
+                Toast.makeText(
+                    context, "Please enter a valid amount", Toast.LENGTH_SHORT
+                ).show()
+                return@Button
+            }
 
-                val categoryValue = if (type == Types.INCOME.type) {
-                    "salary"
-                } else {
-                    category.ifEmpty {
-                        Categories.OTHER.category
-                    }
-                }
-
-                val transactionEntity = TransactionEntity(
-                    type = type,
-                    category = categoryValue,
-                    amount = amountDouble,
-                    date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                )
-
-                coroutineScope.launch {
-                    transactionDao.insertTransaction(transactionEntity)
-                    navController.popBackStack()
+            val categoryValue = if (type == Types.INCOME.type) {
+                "salary"
+            } else {
+                category.ifEmpty {
+                    Categories.OTHER.category
                 }
             }
-        ) {
+
+            val transactionEntity = TransactionEntity(
+                type = type,
+                category = categoryValue,
+                amount = amountDouble,
+                date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
+
+            coroutineScope.launch {
+                transactionDao.insertTransaction(transactionEntity)
+                navController.popBackStack()
+            }
+        }) {
             Text(text = "Save")
+        }
+
+        if (showModalBottomSheet) {
+            AddCategoryBottomSheet(onDismissRequest = { showModalBottomSheet = false },
+                onAddCategory = { categoryName ->
+                    coroutineScope.launch {
+                        val newCategory = CategoryEntity(name = categoryName)
+                        transactionDao.insertCategory(newCategory)
+                        transactionDao.getAllCategories().collectLatest {
+                            categories.value = it
+                        }
+                    }
+                })
         }
     }
 }
