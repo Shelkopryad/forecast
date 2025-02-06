@@ -22,6 +22,10 @@ import com.example.testapp.dao.TransactionDao
 import com.example.testapp.ui.theme.TestappTheme
 import com.example.testapp.viewModels.MainScreenViewModel
 import com.example.testapp.viewModels.TransactionHistoryViewModel
+import com.example.testapp.views.AddTransactionScreen
+import com.example.testapp.views.EditTransactionScreen
+import com.example.testapp.views.MainScreen
+import com.example.testapp.views.TransactionHistoryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

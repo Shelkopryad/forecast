@@ -1,8 +1,7 @@
-package com.example.testapp
+package com.example.testapp.views
 
 import android.app.DatePickerDialog
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +41,6 @@ import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -51,46 +50,27 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditTransactionScreen(
-    transactionId: Int,
-    navController: NavController,
-    transactionDao: TransactionDao
+fun AddTransactionScreen(
+    navController: NavController, transactionDao: TransactionDao
 ) {
-
-    var type by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-
-    var transaction by remember { mutableStateOf<TransactionEntity?>(null) }
-    val categories: MutableState<List<CategoryEntity>> = remember { mutableStateOf(emptyList()) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(transactionId) {
-        coroutineScope.launch {
-            transaction = transactionDao.getTransactionsById(transactionId).first()
-            Log.d("EditScreenViewModel", "Selected transaction: ${transaction}")
-            type = transaction?.type ?: ""
-            category = transaction?.category ?: ""
-            amount = transaction?.amount.toString()
-            date = transaction?.date ?: ""
+    val categories: MutableState<List<CategoryEntity>> = remember { mutableStateOf(emptyList()) }
 
-            transactionDao.getAllCategories().collectLatest {
-                categories.value = it.sortedBy { it.name }
-            }
-        }
-    }
-
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
+    var type by remember { mutableStateOf("") }
     var expandedType by remember { mutableStateOf(false) }
+    var showModalBottomSheet by remember { mutableStateOf(false) }
+
     val types = listOf(
-        Types.INCOME.type,
-        Types.EXPENSE.type
+        Types.INCOME.type, Types.EXPENSE.type
     )
 
+    var category by remember { mutableStateOf("") }
     var expandedCategory by remember { mutableStateOf(false) }
+
+    var amount by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf(LocalDate.now()) }
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -99,11 +79,18 @@ fun EditTransactionScreen(
     calendar.time = Date()
 
     val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            date = LocalDate.of(year, month + 1, dayOfMonth).toString()
+        context, { _, year, month, dayOfMonth ->
+            date = LocalDate.of(year, month + 1, dayOfMonth)
         }, year, month, day
     )
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            transactionDao.getAllCategories().collectLatest {
+                categories.value = it.sortedBy { it.name }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -112,11 +99,20 @@ fun EditTransactionScreen(
             .systemBarsPadding()
     ) {
         Text(
-            text = "Edit Transaction",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Add Transaction", style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = amount,
+            onValueChange = { amount = it },
+            label = { Text("Amount") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row {
             ExposedDropdownMenuBox(
@@ -134,18 +130,13 @@ fun EditTransactionScreen(
                         .fillMaxWidth()
                         .menuAnchor()
                 )
-                ExposedDropdownMenu(
-                    expanded = expandedType,
-                    onDismissRequest = { expandedType = false }
-                ) {
+                ExposedDropdownMenu(expanded = expandedType,
+                    onDismissRequest = { expandedType = false }) {
                     types.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(selectionOption) },
-                            onClick = {
-                                type = selectionOption
-                                expandedType = false
-                            }
-                        )
+                        DropdownMenuItem(text = { Text(selectionOption) }, onClick = {
+                            type = selectionOption
+                            expandedType = false
+                        })
                     }
                 }
             }
@@ -168,37 +159,34 @@ fun EditTransactionScreen(
                             .fillMaxWidth()
                             .menuAnchor()
                     )
-                    ExposedDropdownMenu(
-                        expanded = expandedCategory,
-                        onDismissRequest = { expandedCategory = false }
-                    ) {
+                    ExposedDropdownMenu(expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }) {
                         categories.value.forEach { selectionOption ->
-                            DropdownMenuItem(
-                                text = { Text(selectionOption.name) },
-                                onClick = {
-                                    category = selectionOption.name
-                                    expandedCategory = false
-                                }
-                            )
+                            DropdownMenuItem(text = { Text(selectionOption.name) }, onClick = {
+                                category = selectionOption.name
+                                expandedCategory = false
+                            })
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.weight(0.1f))
+
+                TextButton(onClick = {
+                    showModalBottomSheet = true
+                }) {
+                    Text(
+                        text = "+",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
-            value = amount,
-            onValueChange = { amount = it },
-            label = { Text("Amount") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = {
+        OutlinedButton(onClick = {
             datePickerDialog.show()
         }) {
             Text(text = "Select Date")
@@ -206,55 +194,61 @@ fun EditTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Date: ${date.format(formatter)}")
+        Text(text = "Date: ${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}")
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        Button(
-            onClick = {
-                if (type.isEmpty() || amount.isEmpty()) {
-                    Toast.makeText(
-                        context,
-                        "Please fill all fields",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@Button
-                }
+        OutlinedButton(onClick = {
+            if (type.isEmpty() || amount.isEmpty()) {
+                Toast.makeText(
+                    context, "Please fill all fields", Toast.LENGTH_SHORT
+                ).show()
+                return@OutlinedButton
+            }
 
-                val amountDouble = amount.toDoubleOrNull()
+            val amountDouble = amount.toDoubleOrNull()
 
-                if (amountDouble == null) {
-                    Toast.makeText(
-                        context,
-                        "Please enter a valid amount",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@Button
-                }
+            if (amountDouble == null) {
+                Toast.makeText(
+                    context, "Please enter a valid amount", Toast.LENGTH_SHORT
+                ).show()
+                return@OutlinedButton
+            }
 
-                val categoryValue = if (type == Types.INCOME.type) {
-                    "salary"
-                } else {
-                    category.ifEmpty {
-                        Categories.OTHER.category
-                    }
-                }
-
-                coroutineScope.launch {
-                    transactionDao.editTransaction(
-                        TransactionEntity(
-                            id = transactionId,
-                            type = type,
-                            category = categoryValue,
-                            amount = amountDouble,
-                            date = date
-                        )
-                    )
-                    navController.popBackStack()
+            val categoryValue = if (type == Types.INCOME.type) {
+                "salary"
+            } else {
+                category.ifEmpty {
+                    Categories.OTHER.category
                 }
             }
-        ) {
+
+            val transactionEntity = TransactionEntity(
+                type = type,
+                category = categoryValue,
+                amount = amountDouble,
+                date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
+
+            coroutineScope.launch {
+                transactionDao.insertTransaction(transactionEntity)
+                navController.popBackStack()
+            }
+        }) {
             Text(text = "Save")
+        }
+
+        if (showModalBottomSheet) {
+            AddCategoryBottomSheet(onDismissRequest = { showModalBottomSheet = false },
+                onAddCategory = { categoryName ->
+                    coroutineScope.launch {
+                        val newCategory = CategoryEntity(name = categoryName)
+                        transactionDao.insertCategory(newCategory)
+                        transactionDao.getAllCategories().collectLatest {
+                            categories.value = it
+                        }
+                    }
+                })
         }
     }
 }

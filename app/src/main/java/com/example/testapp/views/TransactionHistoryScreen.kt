@@ -1,9 +1,10 @@
-package com.example.testapp
+package com.example.testapp.views
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -201,8 +203,16 @@ fun TransactionHistoryScreen(
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row {
-                        Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp)
+                        ) {
                             monthExpensesByCategory.forEach(
                                 {
                                     Text(
@@ -213,8 +223,12 @@ fun TransactionHistoryScreen(
                                 }
                             )
                         }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Column {
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 16.dp)
+                        ) {
                             val pieChartData = PieChartData(
                                 monthExpensesByCategory.map {
                                     PieChartData.Slice(

@@ -1,4 +1,4 @@
-package com.example.testapp
+package com.example.testapp.views
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -12,11 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -67,14 +66,10 @@ fun MainScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        OutlinedButton(
             onClick = {
                 navController.navigate("addTransaction")
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
+            }
         ) {
             Text(text = "Add Transaction")
         }
@@ -123,20 +118,20 @@ fun MainScreen(
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Show more",
-            modifier = Modifier.clickable {
-                navController.navigate("transactionsHistory")
-            },
-            style = TextStyle(
-                color = Color.Blue,
-                textDecoration = TextDecoration.Underline
+            Text(
+                text = "Show more",
+                modifier = Modifier.clickable {
+                    navController.navigate("transactionsHistory")
+                },
+                style = TextStyle(
+                    color = Color.Blue,
+                    textDecoration = TextDecoration.Underline
+                )
             )
-        )
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.testapp
+package com.example.testapp.views
 
 import android.os.Build
 import androidx.annotation.RequiresApi
