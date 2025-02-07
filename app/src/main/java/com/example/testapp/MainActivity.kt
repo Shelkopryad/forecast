@@ -2,16 +2,11 @@ package com.example.testapp
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,7 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.testapp.dao.TransactionDao
-import com.example.testapp.ui.theme.TestappTheme
+import com.example.testapp.ui.theme.FinancesAppTheme
 import com.example.testapp.viewModels.MainScreenViewModel
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.example.testapp.views.AddTransactionScreen
@@ -41,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            TestappTheme {
+            FinancesAppTheme {
                 val navController = rememberNavController()
                 val mainScreenViewModel: MainScreenViewModel by viewModels()
                 val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
@@ -50,17 +45,10 @@ class MainActivity : ComponentActivity() {
                     navController = navController, startDestination = "main"
                 ) {
                     composable("main") {
-                        Scaffold(
-                            modifier = Modifier.fillMaxSize()
-                        ) { innerPadding ->
-                            MainScreen(
-                                viewModel = mainScreenViewModel,
-                                navController = navController,
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                                    .fillMaxSize()
-                            )
-                        }
+                        MainScreen(
+                            viewModel = mainScreenViewModel,
+                            navController = navController
+                        )
                     }
 
                     composable("addTransaction") {
@@ -71,13 +59,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("transactionsHistory") {
-                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            TransactionHistoryScreen(
-                                viewModel = transactionHistoryViewModel,
-                                navController = navController,
-                                modifier = Modifier.padding(innerPadding)
-                            )
-                        }
+                        TransactionHistoryScreen(
+                            viewModel = transactionHistoryViewModel,
+                            navController = navController
+                        )
                     }
 
                     composable(
@@ -86,10 +71,6 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: 0
 
-                        Log.d(
-                            "MainActivity",
-                            "Navigating to EditTransactionScreen with $transactionId"
-                        )
                         EditTransactionScreen(
                             transactionId = transactionId,
                             navController = navController,

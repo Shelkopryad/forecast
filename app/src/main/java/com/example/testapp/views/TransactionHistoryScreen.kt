@@ -46,8 +46,7 @@ import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 @Composable
 fun TransactionHistoryScreen(
     viewModel: TransactionHistoryViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
     val transactions = viewModel.transactions.value.reversed()
     var expandedType by remember { mutableStateOf(false) }
@@ -68,7 +67,7 @@ fun TransactionHistoryScreen(
     )
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .systemBarsPadding()

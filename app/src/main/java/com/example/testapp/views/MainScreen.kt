@@ -34,8 +34,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
     val transactions = viewModel.transactions.value
     val currentBalance = calculateBalance(transactions)
@@ -46,7 +45,7 @@ fun MainScreen(
     val lastFiveTransactions = transactions.takeLast(5).reversed()
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .systemBarsPadding()
