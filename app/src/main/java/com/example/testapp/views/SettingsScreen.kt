@@ -57,8 +57,7 @@ fun SettingsScreen(
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "(click to delete)",
-            style = MaterialTheme.typography.headlineSmall,
+            text = "(click to delete)"
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -77,7 +76,7 @@ fun SettingsScreen(
                     Text(
                         modifier = Modifier.padding(top = 8.dp),
                         text = category.name,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.bodyLarge
                     )
 
                     if (showContextMenu && selectedCategory == category) {
@@ -110,7 +109,7 @@ fun SettingsScreen(
             }) {
                 Text(
                     text = "Add",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
