@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +19,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,7 +49,8 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
-    navController: NavController, transactionDao: TransactionDao
+    navController: NavController,
+    transactionDao: TransactionDao
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -60,7 +59,6 @@ fun AddTransactionScreen(
 
     var type by remember { mutableStateOf("") }
     var expandedType by remember { mutableStateOf(false) }
-    var showModalBottomSheet by remember { mutableStateOf(false) }
 
     val types = listOf(
         Types.INCOME.type, Types.EXPENSE.type
@@ -96,10 +94,11 @@ fun AddTransactionScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .systemBarsPadding()
     ) {
         Text(
-            text = "Add Transaction", style = MaterialTheme.typography.headlineMedium
+            text = "Add Transaction",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -169,18 +168,6 @@ fun AddTransactionScreen(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.weight(0.1f))
-
-                TextButton(onClick = {
-                    showModalBottomSheet = true
-                }) {
-                    Text(
-                        text = "+",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
 
@@ -236,19 +223,6 @@ fun AddTransactionScreen(
             }
         }) {
             Text(text = "Save")
-        }
-
-        if (showModalBottomSheet) {
-            AddCategoryBottomSheet(onDismissRequest = { showModalBottomSheet = false },
-                onAddCategory = { categoryName ->
-                    coroutineScope.launch {
-                        val newCategory = CategoryEntity(name = categoryName)
-                        transactionDao.insertCategory(newCategory)
-                        transactionDao.getAllCategories().collectLatest {
-                            categories.value = it
-                        }
-                    }
-                })
         }
     }
 }

@@ -70,12 +70,12 @@ fun TransactionHistoryScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .systemBarsPadding()
     ) {
         Text(
             text = "Transaction History",
             modifier = Modifier.padding(bottom = 16.dp),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
         )
 
         Spacer(modifier = Modifier.height(16.dp))

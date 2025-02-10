@@ -30,4 +30,7 @@ interface TransactionDao {
 
     @Query("SELECT * FROM categories")
     fun getAllCategories(): Flow<List<CategoryEntity>>
+
+    @Delete
+    suspend fun deleteCategory(category: CategoryEntity)
 }

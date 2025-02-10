@@ -7,6 +7,22 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,10 +36,12 @@ import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.example.testapp.views.AddTransactionScreen
 import com.example.testapp.views.EditTransactionScreen
 import com.example.testapp.views.MainScreen
+import com.example.testapp.views.SettingsScreen
 import com.example.testapp.views.TransactionHistoryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
@@ -41,41 +59,72 @@ class MainActivity : ComponentActivity() {
                 val mainScreenViewModel: MainScreenViewModel by viewModels()
                 val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
 
-                NavHost(
-                    navController = navController, startDestination = "main"
-                ) {
-                    composable("main") {
-                        MainScreen(
-                            viewModel = mainScreenViewModel,
-                            navController = navController
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(stringResource(R.string.app_name)) },
+                            actions = {
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate("settings")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Settings,
+                                        contentDescription = "Settings"
+                                    )
+                                }
+                            }
                         )
                     }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "main",
+                        modifier = Modifier.padding(innerPadding),
+                    ) {
+                        composable("main") {
+                            MainScreen(
+                                viewModel = mainScreenViewModel,
+                                navController = navController
+                            )
+                        }
 
-                    composable("addTransaction") {
-                        AddTransactionScreen(
-                            navController = navController,
-                            transactionDao = transactionDao
-                        )
-                    }
+                        composable("addTransaction") {
+                            AddTransactionScreen(
+                                navController = navController,
+                                transactionDao = transactionDao
+                            )
+                        }
 
-                    composable("transactionsHistory") {
-                        TransactionHistoryScreen(
-                            viewModel = transactionHistoryViewModel,
-                            navController = navController
-                        )
-                    }
+                        composable("transactionsHistory") {
+                            TransactionHistoryScreen(
+                                viewModel = transactionHistoryViewModel,
+                                navController = navController
+                            )
+                        }
 
-                    composable(
-                        route = "edit/{transactionId}",
-                        arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
-                    ) { backStackEntry ->
-                        val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: 0
+                        composable(
+                            route = "edit/{transactionId}",
+                            arguments = listOf(navArgument("transactionId") {
+                                type = NavType.IntType
+                            })
+                        ) { backStackEntry ->
+                            val transactionId =
+                                backStackEntry.arguments?.getInt("transactionId") ?: 0
 
-                        EditTransactionScreen(
-                            transactionId = transactionId,
-                            navController = navController,
-                            transactionDao = transactionDao
-                        )
+                            EditTransactionScreen(
+                                transactionId = transactionId,
+                                navController = navController,
+                                transactionDao = transactionDao
+                            )
+                        }
+
+                        composable("settings") {
+                            SettingsScreen(
+                                transactionDao = transactionDao
+                            )
+                        }
                     }
                 }
             }

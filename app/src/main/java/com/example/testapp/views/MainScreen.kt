@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
@@ -46,9 +45,7 @@ fun MainScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .systemBarsPadding()
+            .padding(start = 16.dp)
     ) {
         Text(
             text = "Balance: ${Math.round(currentBalance)}",
@@ -63,7 +60,7 @@ fun MainScreen(
             style = MaterialTheme.typography.bodyLarge
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         OutlinedButton(
             onClick = {
@@ -93,7 +90,7 @@ fun MainScreen(
 
                         if (showContextMenu && selectedTransaction == transaction) {
                             DropdownMenu(
-                                expanded = showContextMenu,
+                                expanded = true,
                                 onDismissRequest = {
                                     viewModel.showContextMenu.value = false
                                 }
@@ -124,7 +121,8 @@ fun MainScreen(
                 text = "Show more",
                 modifier = Modifier.clickable {
                     navController.navigate("transactionsHistory")
-                },
+                }
+                    .padding(start = 16.dp),
                 style = TextStyle(
                     color = Color.Blue,
                     textDecoration = TextDecoration.Underline
