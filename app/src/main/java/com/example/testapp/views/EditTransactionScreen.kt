@@ -2,7 +2,6 @@ package com.example.testapp.views
 
 import android.app.DatePickerDialog
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,11 +38,11 @@ import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import com.example.testapp.helpers.appDateFormatter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 
@@ -70,7 +68,6 @@ fun EditTransactionScreen(
     LaunchedEffect(transactionId) {
         coroutineScope.launch {
             transaction = transactionDao.getTransactionsById(transactionId).first()
-            Log.d("EditScreenViewModel", "Selected transaction: ${transaction}")
             type = transaction?.type ?: ""
             category = transaction?.category ?: ""
             amount = transaction?.amount.toString()
@@ -81,8 +78,6 @@ fun EditTransactionScreen(
             }
         }
     }
-
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     var expandedType by remember { mutableStateOf(false) }
     val types = listOf(
@@ -100,7 +95,7 @@ fun EditTransactionScreen(
 
     val datePickerDialog = DatePickerDialog(
         context,
-        { _, year, month, dayOfMonth ->
+        { _, _, _, dayOfMonth ->
             date = LocalDate.of(year, month + 1, dayOfMonth).toString()
         }, year, month, day
     )
@@ -206,7 +201,7 @@ fun EditTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Date: ${date.format(formatter)}")
+        Text(text = "Date: ${date.format(appDateFormatter())}")
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -12,10 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.testapp.helpers.appDateFormatter
 import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Types
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -28,7 +28,7 @@ fun TransactionCard(transaction: TransactionEntity) {
         "-${transaction.amount}: ${transaction.category}"
     }
 
-    val date = LocalDate.parse(transaction.date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    val date = LocalDate.parse(transaction.date, appDateFormatter())
     val dateString = "${date.dayOfMonth} "
         .plus(
             date.month.getDisplayName(

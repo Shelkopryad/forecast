@@ -1,7 +1,6 @@
 package com.example.testapp.viewModels
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,12 +9,12 @@ import com.example.testapp.dao.AppRepository
 import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import com.example.testapp.helpers.appDateFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
@@ -31,7 +30,6 @@ class TransactionHistoryViewModel @Inject constructor(
     val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
     val showContextMenu = mutableStateOf(false)
     val selectedTransaction = mutableStateOf<TransactionEntity?>(null)
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -93,7 +91,6 @@ class TransactionHistoryViewModel @Inject constructor(
 
     fun deleteTransaction(transactionEntity: TransactionEntity) {
         viewModelScope.launch {
-            Log.d("TransactionHistoryViewModel", "Deleting transactionEntity: $transactionEntity")
             repository.deleteTransaction(transactionEntity)
         }
     }
@@ -115,7 +112,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val transactionMonth = LocalDate.parse(
                 transactionEntity.date,
-                formatter
+                appDateFormatter()
             ).month.getDisplayName(
                 TextStyle.FULL,
                 Locale.getDefault()
@@ -123,7 +120,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val isYearMatch = LocalDate.now().year == LocalDate.parse(
                 transactionEntity.date,
-                formatter
+                appDateFormatter()
             ).year
 
             val isMonthMatch = selectedMonth.value == transactionMonth
@@ -141,7 +138,7 @@ class TransactionHistoryViewModel @Inject constructor(
                 val currentYear = LocalDate.now().year
 
                 val monthlyExpenses = transactionEntities.filter {
-                    val date = LocalDate.parse(it.date, formatter)
+                    val date = LocalDate.parse(it.date, appDateFormatter())
                     date.month.getDisplayName(
                         TextStyle.FULL,
                         Locale.getDefault()

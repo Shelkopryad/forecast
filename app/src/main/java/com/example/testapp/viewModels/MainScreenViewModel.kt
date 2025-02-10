@@ -1,7 +1,6 @@
 package com.example.testapp.viewModels
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -34,12 +33,10 @@ class MainScreenViewModel @Inject constructor(
                 categories.value = it
             }
         }
-        Log.d("MainScreenViewModel", "Categories: ${categories.value}")
     }
 
     fun deleteTransaction(transactionEntity: TransactionEntity) {
         viewModelScope.launch {
-            Log.d("MainScreenViewModel", "Deleting transactionEntity: $transactionEntity")
             repository.deleteTransaction(transactionEntity)
         }
     }

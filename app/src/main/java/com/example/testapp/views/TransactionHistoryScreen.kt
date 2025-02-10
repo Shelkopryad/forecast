@@ -1,7 +1,6 @@
 package com.example.testapp.views
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,11 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import com.example.testapp.helpers.colorFromCategoryName
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.github.tehras.charts.piechart.PieChart
 import com.github.tehras.charts.piechart.PieChartData
@@ -61,10 +59,6 @@ fun TransactionHistoryScreen(
     val monthExpensesByCategory = viewModel.monthExpensesByCategory.value
     val showContextMenu = viewModel.showContextMenu.value
     val selectedTransaction = viewModel.selectedTransaction.value
-
-    Log.d(
-        "TransactionHistoryScreen", "monthExpensesByCategory: $monthExpensesByCategory"
-    )
 
     Column(
         modifier = Modifier
@@ -129,7 +123,6 @@ fun TransactionHistoryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor()
-
                 )
                 ExposedDropdownMenu(
                     expanded = expandedType,
@@ -212,15 +205,13 @@ fun TransactionHistoryScreen(
                                 .weight(1f)
                                 .padding(start = 16.dp)
                         ) {
-                            monthExpensesByCategory.forEach(
-                                {
-                                    Text(
-                                        text = "${it.first}: ${Math.round(it.second)}",
-                                        color = colorFromCategoryName(it.first)
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            )
+                            monthExpensesByCategory.forEach {
+                                Text(
+                                    text = "${it.first}: ${Math.round(it.second)}",
+                                    color = colorFromCategoryName(it.first)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
                         }
 
                         Column(
@@ -275,7 +266,7 @@ fun TransactionHistoryScreen(
 
                     if (showContextMenu && selectedTransaction == transaction) {
                         DropdownMenu(
-                            expanded = showContextMenu,
+                            expanded = true,
                             onDismissRequest = {
                                 viewModel.showContextMenu.value = false
                             }
@@ -300,12 +291,4 @@ fun TransactionHistoryScreen(
             }
         }
     }
-}
-
-fun colorFromCategoryName(category: String): Color {
-    val hash = category.hashCode()
-    val r = (hash and 0xFF0000 shr 16).toFloat() / 255f
-    val g = (hash and 0x00FF00 shr 8).toFloat() / 255f
-    val b = (hash and 0x0000FF).toFloat() / 255f
-    return Color(r, g, b, 1f)
 }

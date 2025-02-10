@@ -23,11 +23,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.testapp.dao.TransactionEntity
-import com.example.testapp.enums.Types
+import com.example.testapp.helpers.calculateBalance
+import com.example.testapp.helpers.calculateMonthlyExpense
 import com.example.testapp.viewModels.MainScreenViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -119,9 +117,10 @@ fun MainScreen(
 
             Text(
                 text = "Show more",
-                modifier = Modifier.clickable {
-                    navController.navigate("transactionsHistory")
-                }
+                modifier = Modifier
+                    .clickable {
+                        navController.navigate("transactionsHistory")
+                    }
                     .padding(start = 16.dp),
                 style = TextStyle(
                     color = Color.Blue,
@@ -130,28 +129,4 @@ fun MainScreen(
             )
         }
     }
-}
-
-fun calculateBalance(transactions: List<TransactionEntity>): Double {
-    return transactions.sumOf {
-        if (it.type == Types.INCOME.type) {
-            it.amount
-        } else {
-            -it.amount
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun calculateMonthlyExpense(
-    transactions: List<TransactionEntity>
-): Double {
-    val currentMonth = LocalDate.now().monthValue
-    val currentYear = LocalDate.now().year
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-    return transactions.filter {
-        val date = LocalDate.parse(it.date, formatter)
-        date.monthValue == currentMonth && date.year == currentYear && it.type == Types.EXPENSE.type
-    }.sumOf { it.amount }
 }

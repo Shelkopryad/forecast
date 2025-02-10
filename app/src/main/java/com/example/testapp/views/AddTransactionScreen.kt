@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.testapp.helpers.appDateFormatter
 import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
@@ -41,7 +42,6 @@ import com.example.testapp.enums.Types
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 
@@ -77,7 +77,7 @@ fun AddTransactionScreen(
     calendar.time = Date()
 
     val datePickerDialog = DatePickerDialog(
-        context, { _, year, month, dayOfMonth ->
+        context, { _, _, _, dayOfMonth ->
             date = LocalDate.of(year, month + 1, dayOfMonth)
         }, year, month, day
     )
@@ -181,7 +181,7 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Date: ${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}")
+        Text(text = "Date: ${date.format(appDateFormatter())}")
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -214,7 +214,7 @@ fun AddTransactionScreen(
                 type = type,
                 category = categoryValue,
                 amount = amountDouble,
-                date = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                date = date.format(appDateFormatter())
             )
 
             coroutineScope.launch {
