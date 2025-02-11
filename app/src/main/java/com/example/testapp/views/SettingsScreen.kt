@@ -118,7 +118,7 @@ fun SettingsScreen(
             AddCategoryBottomSheet(onDismissRequest = { showModalBottomSheet = false },
                 onAddCategory = { categoryName ->
                     coroutineScope.launch {
-                        val newCategory = CategoryEntity(name = categoryName)
+                        val newCategory = CategoryEntity(name = categoryName.lowercase())
                         transactionDao.insertCategory(newCategory)
                         transactionDao.getAllCategories().collectLatest {
                             categories = it

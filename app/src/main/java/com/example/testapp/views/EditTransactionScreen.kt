@@ -113,6 +113,16 @@ fun EditTransactionScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        TextField(
+            value = amount,
+            onValueChange = { amount = it },
+            label = { Text("Amount") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row {
             ExposedDropdownMenuBox(
                 expanded = expandedType,
@@ -183,16 +193,6 @@ fun EditTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
-            value = amount,
-            onValueChange = { amount = it },
-            label = { Text("Amount") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
         OutlinedButton(onClick = {
             datePickerDialog.show()
         }) {
@@ -203,7 +203,7 @@ fun EditTransactionScreen(
 
         Text(text = "Date: ${date.format(appDateFormatter())}")
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedButton(
             onClick = {

@@ -33,12 +33,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.testapp.helpers.appDateFormatter
 import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
+import com.example.testapp.helpers.appDateFormatter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -129,13 +129,18 @@ fun AddTransactionScreen(
                         .fillMaxWidth()
                         .menuAnchor()
                 )
-                ExposedDropdownMenu(expanded = expandedType,
-                    onDismissRequest = { expandedType = false }) {
+                ExposedDropdownMenu(
+                    expanded = expandedType,
+                    onDismissRequest = { expandedType = false }
+                ) {
                     types.forEach { selectionOption ->
-                        DropdownMenuItem(text = { Text(selectionOption) }, onClick = {
-                            type = selectionOption
-                            expandedType = false
-                        })
+                        DropdownMenuItem(
+                            text = { Text(selectionOption) },
+                            onClick = {
+                                type = selectionOption
+                                expandedType = false
+                            }
+                        )
                     }
                 }
             }
@@ -158,13 +163,18 @@ fun AddTransactionScreen(
                             .fillMaxWidth()
                             .menuAnchor()
                     )
-                    ExposedDropdownMenu(expanded = expandedCategory,
-                        onDismissRequest = { expandedCategory = false }) {
+                    ExposedDropdownMenu(
+                        expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }
+                    ) {
                         categories.value.forEach { selectionOption ->
-                            DropdownMenuItem(text = { Text(selectionOption.name) }, onClick = {
-                                category = selectionOption.name
-                                expandedCategory = false
-                            })
+                            DropdownMenuItem(
+                                text = { Text(selectionOption.name) },
+                                onClick = {
+                                    category = selectionOption.name
+                                    expandedCategory = false
+                                }
+                            )
                         }
                     }
                 }
@@ -185,43 +195,49 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        OutlinedButton(onClick = {
-            if (type.isEmpty() || amount.isEmpty()) {
-                Toast.makeText(
-                    context, "Please fill all fields", Toast.LENGTH_SHORT
-                ).show()
-                return@OutlinedButton
-            }
+        OutlinedButton(
+            onClick = {
+                if (type.isEmpty() || amount.isEmpty()) {
+                    Toast.makeText(
+                        context,
+                        "Please fill all fields",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@OutlinedButton
+                }
 
-            val amountDouble = amount.toDoubleOrNull()
+                val amountDouble = amount.toDoubleOrNull()
 
-            if (amountDouble == null) {
-                Toast.makeText(
-                    context, "Please enter a valid amount", Toast.LENGTH_SHORT
-                ).show()
-                return@OutlinedButton
-            }
+                if (amountDouble == null) {
+                    Toast.makeText(
+                        context,
+                        "Please enter a valid amount",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@OutlinedButton
+                }
 
-            val categoryValue = if (type == Types.INCOME.type) {
-                "salary"
-            } else {
-                category.ifEmpty {
-                    Categories.OTHER.category
+                val categoryValue = if (type == Types.INCOME.type) {
+                    "salary"
+                } else {
+                    category.ifEmpty {
+                        Categories.OTHER.category
+                    }
+                }
+
+                coroutineScope.launch {
+                    transactionDao.insertTransaction(
+                        TransactionEntity(
+                            type = type,
+                            category = categoryValue,
+                            amount = amountDouble,
+                            date = date.format(appDateFormatter())
+                        )
+                    )
+                    navController.popBackStack()
                 }
             }
-
-            val transactionEntity = TransactionEntity(
-                type = type,
-                category = categoryValue,
-                amount = amountDouble,
-                date = date.format(appDateFormatter())
-            )
-
-            coroutineScope.launch {
-                transactionDao.insertTransaction(transactionEntity)
-                navController.popBackStack()
-            }
-        }) {
+        ) {
             Text(text = "Save")
         }
     }
