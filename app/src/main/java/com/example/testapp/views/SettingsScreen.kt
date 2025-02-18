@@ -22,7 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
+import com.example.testapp.R
 import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import kotlinx.coroutines.flow.collectLatest
@@ -33,6 +36,7 @@ fun SettingsScreen(
     transactionDao: TransactionDao
 ) {
 
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var categories by remember { mutableStateOf<List<CategoryEntity>>(emptyList()) }
     var showModalBottomSheet by remember { mutableStateOf(false) }
@@ -53,11 +57,11 @@ fun SettingsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Current categories",
+            text = getString(context, R.string.current_categories),
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "(click to delete)"
+            text = getString(context, R.string.click_to_delete),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -87,7 +91,7 @@ fun SettingsScreen(
                             }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Delete") },
+                                text = { Text(getString(context, R.string.delete)) },
                                 onClick = {
                                     coroutineScope.launch {
                                         transactionDao.deleteCategory(category)
@@ -108,7 +112,7 @@ fun SettingsScreen(
                 showModalBottomSheet = true
             }) {
                 Text(
-                    text = "Add",
+                    text = getString(context, R.string.add_category),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

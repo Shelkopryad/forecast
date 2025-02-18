@@ -32,7 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
+import com.example.testapp.R
 import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.dao.TransactionEntity
@@ -106,7 +108,7 @@ fun EditTransactionScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Edit Transaction",
+            text = getString(context, R.string.edit_transaction),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -116,7 +118,7 @@ fun EditTransactionScreen(
         TextField(
             value = amount,
             onValueChange = { amount = it },
-            label = { Text("Amount") },
+            label = { Text(getString(context, R.string.amount)) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
@@ -134,7 +136,7 @@ fun EditTransactionScreen(
                     onValueChange = { type = it },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
-                    label = { Text("Type") },
+                    label = { Text(getString(context, R.string.type)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor()
@@ -155,7 +157,7 @@ fun EditTransactionScreen(
                 }
             }
 
-            if (type == "expense") {
+            if (type == Types.EXPENSE.type) {
                 Spacer(modifier = Modifier.weight(0.1f))
 
                 ExposedDropdownMenuBox(
@@ -168,7 +170,7 @@ fun EditTransactionScreen(
                         onValueChange = { category = it },
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
-                        label = { Text("Category") },
+                        label = { Text(getString(context, R.string.category)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -196,12 +198,12 @@ fun EditTransactionScreen(
         OutlinedButton(onClick = {
             datePickerDialog.show()
         }) {
-            Text(text = "Select Date")
+            Text(text = getString(context, R.string.select_date))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Date: ${date.format(appDateFormatter())}")
+        Text(text = "${getString(context, R.string.date)}: ${date.format(appDateFormatter())}")
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -210,7 +212,7 @@ fun EditTransactionScreen(
                 if (type.isEmpty() || amount.isEmpty()) {
                     Toast.makeText(
                         context,
-                        "Please fill all fields",
+                        getString(context, R.string.please_fill_all_fields),
                         Toast.LENGTH_SHORT
                     ).show()
                     return@OutlinedButton
@@ -221,7 +223,7 @@ fun EditTransactionScreen(
                 if (amountDouble == null) {
                     Toast.makeText(
                         context,
-                        "Please enter a valid amount",
+                        getString(context, R.string.please_enter_a_valid_amount),
                         Toast.LENGTH_SHORT
                     ).show()
                     return@OutlinedButton
@@ -249,7 +251,7 @@ fun EditTransactionScreen(
                 }
             }
         ) {
-            Text(text = "Save")
+            Text(text = getString(context, R.string.save))
         }
     }
 }

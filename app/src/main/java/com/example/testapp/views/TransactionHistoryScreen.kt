@@ -29,8 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
+import com.example.testapp.R
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
 import com.example.testapp.helpers.colorFromCategoryName
@@ -46,6 +49,7 @@ fun TransactionHistoryScreen(
     viewModel: TransactionHistoryViewModel,
     navController: NavController
 ) {
+    val context = LocalContext.current
     val transactions = viewModel.transactions.value.reversed()
     var expandedType by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
@@ -66,7 +70,7 @@ fun TransactionHistoryScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Transaction History",
+            text = getString(context, R.string.transaction_history),
             modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
@@ -83,7 +87,7 @@ fun TransactionHistoryScreen(
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedMonth) },
-                label = { Text("Month") },
+                label = { Text(getString(context, R.string.month)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor()
@@ -119,7 +123,7 @@ fun TransactionHistoryScreen(
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
-                    label = { Text("Type") },
+                    label = { Text(getString(context, R.string.type)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .menuAnchor()
@@ -154,7 +158,7 @@ fun TransactionHistoryScreen(
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
-                        label = { Text("Category") },
+                        label = { Text(getString(context, R.string.category)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -189,7 +193,7 @@ fun TransactionHistoryScreen(
                 Column {
                     Row {
                         Text(
-                            text = "Expenses in ".plus(selectedMonth),
+                            text = "${getString(context, R.string.expenses_in)} $selectedMonth",
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
@@ -244,7 +248,7 @@ fun TransactionHistoryScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "All Transactions",
+            text = getString(context, R.string.all_transactions),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(start = 8.dp)
         )
@@ -272,14 +276,14 @@ fun TransactionHistoryScreen(
                             }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Edit") },
+                                text = { Text(getString(context, R.string.edit)) },
                                 onClick = {
                                     navController.navigate("edit/${transaction.id}")
                                     viewModel.showContextMenu.value = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Delete") },
+                                text = { Text(getString(context, R.string.delete)) },
                                 onClick = {
                                     viewModel.deleteTransaction(transaction)
                                     viewModel.showContextMenu.value = false

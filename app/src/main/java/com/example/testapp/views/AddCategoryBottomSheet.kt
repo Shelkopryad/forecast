@@ -14,7 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
+import com.example.testapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,6 +25,7 @@ fun AddCategoryBottomSheet(
     onDismissRequest: () -> Unit,
     onAddCategory: (String) -> Unit
 ) {
+    val context = LocalContext.current
     var categoryName by remember { mutableStateOf("") }
 
     ModalBottomSheet(
@@ -31,7 +35,7 @@ fun AddCategoryBottomSheet(
         TextField(
             value = categoryName,
             onValueChange = { categoryName = it },
-            label = { Text("Category name") },
+            label = { Text(getString(context, R.string.category_name)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -43,7 +47,7 @@ fun AddCategoryBottomSheet(
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Add")
+            Text(getString(context, R.string.add_category))
         }
     }
 }
