@@ -28,8 +28,6 @@ class TransactionHistoryViewModel @Inject constructor(
     val categories = mutableStateOf(Categories.getCategories())
     val selectedType = mutableStateOf(Types.ALL.type)
     val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
-    val showContextMenu = mutableStateOf(false)
-    val selectedTransaction = mutableStateOf<TransactionEntity?>(null)
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -43,12 +41,6 @@ class TransactionHistoryViewModel @Inject constructor(
     )
 
     val selectedCategory = mutableStateOf(Categories.ALL.category)
-
-    val types = listOf(
-        Types.ALL.type,
-        Types.INCOME.type,
-        Types.EXPENSE.type
-    )
 
     val months = Month.entries.map {
         it.getDisplayName(
@@ -71,28 +63,10 @@ class TransactionHistoryViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onTypeSelected(type: String) {
-        selectedType.value = type
-        updateTransactions()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun onMonthSelected(month: String) {
         selectedMonth.value = month
         updateTransactions()
         updateMonthExpensesByCategory()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun onCategorySelected(category: String) {
-        selectedCategory.value = category
-        updateTransactions()
-    }
-
-    fun deleteTransaction(transactionEntity: TransactionEntity) {
-        viewModelScope.launch {
-            repository.deleteTransaction(transactionEntity)
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

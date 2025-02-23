@@ -4,7 +4,6 @@
     <string name="edit_transaction">Edit transaction</string>
     <string name="all_transactions">All transactions</string>
     <string name="amount">Amount</string>
-    <string name="balance">Balance</string>
     <string name="monthly_expense">Monthly Expense</string>
     <string name="no_transactions">No transactions</string>
     <string name="edit">Edit</string>
@@ -15,6 +14,7 @@
     <string name="date">Date</string>
     <string name="save">Save</string>
     <string name="type">Type</string>
+    <string name="balance">Balance</string>
     <string name="income">Income</string>
     <string name="expense">Expense</string>
     <string name="please_fill_all_fields">Please fill all fields</string>
@@ -25,5 +25,4 @@
     <string name="click_to_delete">(click to delete)</string>
     <string name="transaction_history">Transaction History</string>
     <string name="month">Month</string>
-    <string name="expenses_in">Expenses in</string>
 </resources>

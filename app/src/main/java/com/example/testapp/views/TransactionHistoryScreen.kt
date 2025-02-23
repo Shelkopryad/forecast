@@ -2,7 +2,6 @@ package com.example.testapp.views
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -32,9 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
-import androidx.navigation.NavController
 import com.example.testapp.R
-import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
 import com.example.testapp.helpers.colorFromCategoryName
 import com.example.testapp.viewModels.TransactionHistoryViewModel
@@ -46,23 +40,14 @@ import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionHistoryScreen(
-    viewModel: TransactionHistoryViewModel,
-    navController: NavController
+    viewModel: TransactionHistoryViewModel
 ) {
     val context = LocalContext.current
     val transactions = viewModel.transactions.value.reversed()
-    var expandedType by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
-    var expandedCategory by remember { mutableStateOf(false) }
-    val selectedType = viewModel.selectedType.value
     val selectedMonth = viewModel.selectedMonth.value
-    val selectedCategory = viewModel.selectedCategory.value
-    val types = viewModel.types
     val months = viewModel.months
-    val categories = viewModel.categories.value
     val monthExpensesByCategory = viewModel.monthExpensesByCategory.value
-    val showContextMenu = viewModel.showContextMenu.value
-    val selectedTransaction = viewModel.selectedTransaction.value
 
     Column(
         modifier = Modifier
@@ -108,82 +93,53 @@ fun TransactionHistoryScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            ExposedDropdownMenuBox(
-                expanded = expandedType,
-                onExpandedChange = { expandedType = !expandedType },
-                modifier = Modifier.weight(1f)
-            ) {
-                TextField(
-                    value = selectedType,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedType) },
-                    label = { Text(getString(context, R.string.type)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                )
-                ExposedDropdownMenu(
-                    expanded = expandedType,
-                    onDismissRequest = { expandedType = false }
-                ) {
-                    types.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(text = selectionOption) },
-                            onClick = {
-                                viewModel.onTypeSelected(selectionOption)
-                                viewModel.onCategorySelected(Categories.ALL.category)
-                                expandedType = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            if (selectedType == Types.EXPENSE.type) {
-                Spacer(modifier = Modifier.weight(0.1f))
-
-                ExposedDropdownMenuBox(
-                    expanded = expandedCategory,
-                    onExpandedChange = { expandedCategory = !expandedCategory },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    TextField(
-                        value = selectedCategory,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
-                        label = { Text(getString(context, R.string.category)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expandedCategory,
-                        onDismissRequest = { expandedCategory = false }
-                    ) {
-                        categories.forEach { selectionOption ->
-                            DropdownMenuItem(
-                                text = { Text(text = selectionOption.name) },
-                                onClick = {
-                                    viewModel.onCategorySelected(selectionOption.name)
-                                    expandedCategory = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (monthExpensesByCategory.isNotEmpty()) {
+            val income = transactions.filter {
+                it.type == Types.INCOME.type && it.category == "salary"
+            }.sumOf { it.amount }
+            val expense = transactions.filter {
+                it.type == Types.EXPENSE.type
+            }.sumOf { it.amount }
+            val balance = income - expense
+
+            Row {
+                Text(
+                    text = "${getString(context, R.string.income)}: ${Math.round(income)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row {
+                Text(
+                    text = "${getString(context, R.string.expense)}: ${Math.round(expense)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row {
+                Text(
+                    text = "${getString(context, R.string.balance)}: ${Math.round(balance)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row {
+                Text(
+                    text = "By category:",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -191,14 +147,6 @@ fun TransactionHistoryScreen(
                     .wrapContentHeight()
             ) {
                 Column {
-                    Row {
-                        Text(
-                            text = "${getString(context, R.string.expenses_in)} $selectedMonth",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -209,13 +157,15 @@ fun TransactionHistoryScreen(
                                 .weight(1f)
                                 .padding(start = 16.dp)
                         ) {
-                            monthExpensesByCategory.forEach {
-                                Text(
-                                    text = "${it.first}: ${Math.round(it.second)}",
-                                    color = colorFromCategoryName(it.first)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
+                            monthExpensesByCategory
+                                .sortedByDescending { it.second }
+                                .forEach {
+                                    Text(
+                                        text = "${it.first}: ${Math.round(it.second)}",
+                                        color = colorFromCategoryName(it.first)
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
                         }
 
                         Column(
@@ -238,56 +188,6 @@ fun TransactionHistoryScreen(
                                     .fillMaxWidth()
                                     .height(180.dp),
                                 sliceDrawer = SimpleSliceDrawer(sliceThickness = 50f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = getString(context, R.string.all_transactions),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn {
-            items(transactions) { transaction ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable {
-                            viewModel.selectedTransaction.value = transaction
-                            viewModel.showContextMenu.value = true
-                        }
-                        .padding(8.dp)
-                ) {
-                    TransactionCard(transaction = transaction)
-
-                    if (showContextMenu && selectedTransaction == transaction) {
-                        DropdownMenu(
-                            expanded = true,
-                            onDismissRequest = {
-                                viewModel.showContextMenu.value = false
-                            }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(getString(context, R.string.edit)) },
-                                onClick = {
-                                    navController.navigate("edit/${transaction.id}")
-                                    viewModel.showContextMenu.value = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(getString(context, R.string.delete)) },
-                                onClick = {
-                                    viewModel.deleteTransaction(transaction)
-                                    viewModel.showContextMenu.value = false
-                                }
                             )
                         }
                     }
