@@ -25,4 +25,6 @@
     <string name="click_to_delete">(click to delete)</string>
     <string name="transaction_history">Transaction History</string>
     <string name="month">Month</string>
+    <string name="average_monthly_expense">Average monthly</string>
+    <string name="expenses_wo_rent">Expenses:</string>
 </resources>

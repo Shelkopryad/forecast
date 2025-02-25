@@ -16,65 +16,53 @@ class FakeTransactionDao : TransactionDao {
             CategoryEntity(name = "random")
         )
     )
-    val categories: Flow<List<CategoryEntity>> = _categories.asStateFlow()
 
     private val _transactions = MutableStateFlow(
         listOf(
             TransactionEntity(
-                id = 1,
-                amount = 5000.0,
-                type = "income",
-                category = "salary",
-                date = "2025-02-01"
+                id = 1, amount = 5000.0, type = "income", category = "salary", date = "2025-01-01"
             ),
             TransactionEntity(
-                id = 2,
-                amount = 10.0,
-                type = "expense",
-                category = "food",
-                date = "2025-02-02"
+                id = 2, amount = 10.0, type = "expense", category = "food", date = "2025-01-02"
             ),
             TransactionEntity(
-                id = 3,
-                amount = 150.0,
-                type = "expense",
-                category = "pets",
-                date = "2025-02-03"
+                id = 3, amount = 150.0, type = "expense", category = "pets", date = "2025-01-03"
             ),
             TransactionEntity(
-                id = 4,
-                amount = 25.0,
-                type = "expense",
-                category = "food",
-                date = "2025-02-04"
+                id = 4, amount = 25.0, type = "expense", category = "food", date = "2025-01-04"
             ),
             TransactionEntity(
-                id = 5,
-                amount = 87.0,
-                type = "expense",
-                category = "food",
-                date = "2025-02-05"
+                id = 5, amount = 87.0, type = "expense", category = "food", date = "2025-01-05"
             ),
             TransactionEntity(
-                id = 6,
-                amount = 139.0,
-                type = "expense",
-                category = "other",
-                date = "2025-02-06"
+                id = 6, amount = 139.0, type = "expense", category = "other", date = "2025-01-06"
             ),
             TransactionEntity(
-                id = 7,
-                amount = 200.0,
-                type = "expense",
-                category = "entertainment",
-                date = "2025-02-07"
+                id = 7, amount = 200.0, type = "expense", category = "entertainment", date = "2025-01-07"
             ),
             TransactionEntity(
-                id = 8,
-                amount = 800.0,
-                type = "expense",
-                category = "rent",
-                date = "2025-02-08"
+                id = 8, amount = 5000.0, type = "income", category = "salary", date = "2025-02-01"
+            ),
+            TransactionEntity(
+                id = 9, amount = 10.0, type = "expense", category = "food", date = "2025-02-02"
+            ),
+            TransactionEntity(
+                id = 10, amount = 150.0, type = "expense", category = "pets", date = "2025-02-03"
+            ),
+            TransactionEntity(
+                id = 11, amount = 25.0, type = "expense", category = "food", date = "2025-02-04"
+            ),
+            TransactionEntity(
+                id = 12, amount = 87.0, type = "expense", category = "food", date = "2025-02-05"
+            ),
+            TransactionEntity(
+                id = 13, amount = 139.0, type = "expense", category = "other", date = "2025-02-06"
+            ),
+            TransactionEntity(
+                id = 14, amount = 200.0, type = "expense", category = "entertainment", date = "2025-02-07"
+            ),
+            TransactionEntity(
+                id = 15, amount = 800.0, type = "expense", category = "rent", date = "2025-02-08"
             ),
         )
     )
@@ -97,9 +85,7 @@ class FakeTransactionDao : TransactionDao {
 
     override suspend fun insertCategory(category: CategoryEntity) {}
 
-    override fun getAllCategories(): Flow<List<CategoryEntity>> {
-        return categories
-    }
+    override fun getAllCategories(): Flow<List<CategoryEntity>> = _categories.asStateFlow()
 
     override suspend fun deleteCategory(category: CategoryEntity) {}
 }

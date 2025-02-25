@@ -63,16 +63,16 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text(stringResource(R.string.app_name)) },
                             actions = {
-                                IconButton(
-                                    onClick = {
-                                        navController.navigate("forecast")
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.DateRange,
-                                        contentDescription = "Forecast"
-                                    )
-                                }
+//                                IconButton(
+//                                    onClick = {
+//                                        navController.navigate("forecast")
+//                                    }
+//                                ) {
+//                                    Icon(
+//                                        imageVector = Icons.Outlined.DateRange,
+//                                        contentDescription = "Forecast"
+//                                    )
+//                                }
                                 IconButton(
                                     onClick = {
                                         navController.navigate("settings")
@@ -128,11 +128,11 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("forecast") {
-                            ForecastScreen(
-                                viewModel = forecastViewModel
-                            )
-                        }
+//                        composable("forecast") {
+//                            ForecastScreen(
+//                                viewModel = forecastViewModel
+//                            )
+//                        }
 
                         composable("settings") {
                             SettingsScreen(

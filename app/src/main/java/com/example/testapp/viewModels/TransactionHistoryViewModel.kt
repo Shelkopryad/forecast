@@ -2,6 +2,7 @@ package com.example.testapp.viewModels
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,8 +27,12 @@ class TransactionHistoryViewModel @Inject constructor(
 ) : ViewModel() {
     val transactions = mutableStateOf<List<TransactionEntity>>(emptyList())
     val categories = mutableStateOf(Categories.getCategories())
-    val selectedType = mutableStateOf(Types.ALL.type)
     val monthExpensesByCategory = mutableStateOf<List<Pair<String, Double>>>(emptyList())
+    val monthlySalary = mutableDoubleStateOf(0.0)
+    val onlyRent = mutableDoubleStateOf(0.0)
+    val monthlyExpenseWoRent = mutableDoubleStateOf(0.0)
+    val monthlyBalance = mutableDoubleStateOf(0.0)
+    val averageMonthlyExpense = mutableDoubleStateOf(0.0)
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -40,8 +45,6 @@ class TransactionHistoryViewModel @Inject constructor(
             )
     )
 
-    val selectedCategory = mutableStateOf(Categories.ALL.category)
-
     val months = Month.entries.map {
         it.getDisplayName(
             TextStyle.FULL,
@@ -53,7 +56,7 @@ class TransactionHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             repository.transactionsFlow.collectLatest { list ->
                 transactions.value = filterTransactions(list)
-                updateMonthExpensesByCategory()
+                updateMonthTransactions()
             }
 
             repository.categoriesFlow.collectLatest {
@@ -66,7 +69,7 @@ class TransactionHistoryViewModel @Inject constructor(
     fun onMonthSelected(month: String) {
         selectedMonth.value = month
         updateTransactions()
-        updateMonthExpensesByCategory()
+        updateMonthTransactions()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -81,9 +84,6 @@ class TransactionHistoryViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun filterTransactions(transactionEntities: List<TransactionEntity>): List<TransactionEntity> {
         return transactionEntities.filter { transactionEntity ->
-            val isTypeMatch =
-                selectedType.value == Types.ALL.type || transactionEntity.type == selectedType.value
-
             val transactionMonth = LocalDate.parse(
                 transactionEntity.date,
                 appDateFormatter()
@@ -99,32 +99,106 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val isMonthMatch = selectedMonth.value == transactionMonth
 
-            val isCategoryMatch =
-                selectedCategory.value == Types.ALL.type || transactionEntity.category == selectedCategory.value
-
-            isTypeMatch && isMonthMatch && isYearMatch && isCategoryMatch
+            isMonthMatch && isYearMatch
         }
     }
 
-    private fun updateMonthExpensesByCategory() {
+    private fun updateMonthTransactions() {
         viewModelScope.launch {
             repository.transactionsFlow.collectLatest { transactionEntities ->
                 val currentYear = LocalDate.now().year
 
-                val monthlyExpenses = transactionEntities.filter {
+                val monthlyTransactions = transactionEntities.filter {
                     val date = LocalDate.parse(it.date, appDateFormatter())
                     date.month.getDisplayName(
                         TextStyle.FULL,
                         Locale.getDefault()
-                    ) == selectedMonth.value && date.year == currentYear && it.type == Types.EXPENSE.type
+                    ) == selectedMonth.value && date.year == currentYear
                 }
 
-                val expensesByCategory = monthlyExpenses.groupBy { it.category }
+                val expensesByCategory = monthlyTransactions
+                    .filter { it.type == Types.EXPENSE.type && it.category != Categories.RENT.category }
+                    .groupBy { it.category }
                     .mapValues { entry -> entry.value.sumOf { it.amount } }
                     .toList()
 
-                monthExpensesByCategory.value = expensesByCategory
+                monthExpensesByCategory.value = expensesByCategory.sortedByDescending { it.second }
+                updateMonthBalance(monthlyTransactions)
+                averageMonthlyExpense.doubleValue =
+                    calculateAverageMonthlyExpense(transactionEntities)
             }
+        }
+    }
+
+    private fun updateMonthBalance(monthlyTransactions: List<TransactionEntity>) {
+        val salary = calculateMonthlySalary(monthlyTransactions)
+        val expenseWithRent = calculateMonthlyExpense(monthlyTransactions)
+        val expenseWoRent = calculateMonthExpensesWithoutRent(monthlyTransactions)
+
+        monthlySalary.doubleValue = salary
+        onlyRent.doubleValue = calculateOnlyRent(monthlyTransactions)
+        monthlyExpenseWoRent.doubleValue = expenseWoRent
+        monthlyBalance.doubleValue = salary - expenseWithRent
+    }
+
+    private fun calculateMonthExpensesWithoutRent(transactions: List<TransactionEntity>): Double {
+        return transactions.sumOf { transaction ->
+            if (transaction.type == Types.EXPENSE.type && transaction.category != Categories.RENT.category) {
+                transaction.amount
+            } else {
+                0.0
+            }
+        }
+    }
+
+    private fun calculateOnlyRent(monthlyTransactions: List<TransactionEntity>): Double {
+        return monthlyTransactions.sumOf { transaction ->
+            if (transaction.type == Types.EXPENSE.type && transaction.category == Categories.RENT.category) {
+                transaction.amount
+            } else {
+                0.0
+            }
+        }
+    }
+
+    private fun calculateMonthlySalary(monthlyTransactions: List<TransactionEntity>): Double {
+        return monthlyTransactions.sumOf { transaction ->
+            if (transaction.type == Types.INCOME.type && transaction.category == "salary") {
+                transaction.amount
+            } else {
+                0.0
+            }
+        }
+    }
+
+    private fun calculateMonthlyExpense(monthlyTransactions: List<TransactionEntity>): Double {
+        return monthlyTransactions.sumOf { transaction ->
+            if (transaction.type == Types.EXPENSE.type) {
+                transaction.amount
+            } else {
+                0.0
+            }
+        }
+    }
+
+    private fun calculateAverageMonthlyExpense(transactions: List<TransactionEntity>): Double {
+        val monthlyExpenses: MutableList<Double> = mutableListOf()
+
+        transactions.filter {
+            val date = LocalDate.parse(it.date, appDateFormatter())
+            date.year == LocalDate.now().year && it.type == Types.EXPENSE.type && it.category != Categories.RENT.category
+        }.groupBy {
+            val date = LocalDate.parse(it.date, appDateFormatter())
+            date.month
+        }.forEach { (_, transactions) ->
+            val monthlyExpense = transactions.sumOf { it.amount }
+            monthlyExpenses.add(monthlyExpense)
+        }
+
+        return if (monthlyExpenses.isNotEmpty()) {
+            monthlyExpenses.average()
+        } else {
+            0.0
         }
     }
 }

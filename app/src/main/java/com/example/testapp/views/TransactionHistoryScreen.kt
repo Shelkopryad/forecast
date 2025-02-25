@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import com.example.testapp.R
-import com.example.testapp.enums.Types
 import com.example.testapp.helpers.colorFromCategoryName
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.github.tehras.charts.piechart.PieChart
@@ -43,7 +42,6 @@ fun TransactionHistoryScreen(
     viewModel: TransactionHistoryViewModel
 ) {
     val context = LocalContext.current
-    val transactions = viewModel.transactions.value.reversed()
     var expandedMonth by remember { mutableStateOf(false) }
     val selectedMonth = viewModel.selectedMonth.value
     val months = viewModel.months
@@ -96,49 +94,68 @@ fun TransactionHistoryScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (monthExpensesByCategory.isNotEmpty()) {
-            val income = transactions.filter {
-                it.type == Types.INCOME.type && it.category == "salary"
-            }.sumOf { it.amount }
-            val expense = transactions.filter {
-                it.type == Types.EXPENSE.type
-            }.sumOf { it.amount }
-            val balance = income - expense
+            Row {
+                Text(
+                    text = "${getString(context, R.string.balance)}: ${Math.round(viewModel.monthlyBalance.doubleValue)}",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
             Row {
                 Text(
-                    text = "${getString(context, R.string.income)}: ${Math.round(income)}",
+                    text = "${getString(context, R.string.income)}: ${Math.round(viewModel.monthlySalary.doubleValue)}",
                     style = MaterialTheme.typography.bodyLarge
                 )
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             Row {
                 Text(
-                    text = "${getString(context, R.string.expense)}: ${Math.round(expense)}",
+                    text = getString(context, R.string.expenses_wo_rent),
                     style = MaterialTheme.typography.bodyLarge
                 )
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             Row {
                 Text(
-                    text = "${getString(context, R.string.balance)}: ${Math.round(balance)}",
+                    text = " - Rent in $selectedMonth: ${Math.round(viewModel.onlyRent.doubleValue)}.",
                     style = MaterialTheme.typography.bodyLarge
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                Text(
+                    text = " - Other in $selectedMonth: ${Math.round(viewModel.monthlyExpenseWoRent.doubleValue)}.",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Row {
+                Text(
+                    text = " - ${getString(context, R.string.average_monthly_expense)}: ${Math.round(viewModel.averageMonthlyExpense.doubleValue)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+            }
 
             Row {
                 Text(
                     text = "By category:",
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             Row(
                 modifier = Modifier
