@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +28,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.testapp.dao.TransactionDao
 import com.example.testapp.ui.theme.FinancesAppTheme
-import com.example.testapp.viewModels.ForecastViewModel
 import com.example.testapp.viewModels.MainScreenViewModel
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.example.testapp.views.AddTransactionScreen
@@ -56,23 +56,32 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val mainScreenViewModel: MainScreenViewModel by viewModels()
                 val transactionHistoryViewModel: TransactionHistoryViewModel by viewModels()
-                val forecastViewModel: ForecastViewModel by viewModels()
 
                 Scaffold(
                     topBar = {
                         TopAppBar(
                             title = { Text(stringResource(R.string.app_name)) },
                             actions = {
-//                                IconButton(
-//                                    onClick = {
-//                                        navController.navigate("forecast")
-//                                    }
-//                                ) {
-//                                    Icon(
-//                                        imageVector = Icons.Outlined.DateRange,
-//                                        contentDescription = "Forecast"
-//                                    )
-//                                }
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate("main")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Home,
+                                        contentDescription = "Home screen"
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate("forecast")
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.DateRange,
+                                        contentDescription = "Forecast"
+                                    )
+                                }
                                 IconButton(
                                     onClick = {
                                         navController.navigate("settings")
@@ -128,11 +137,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-//                        composable("forecast") {
-//                            ForecastScreen(
-//                                viewModel = forecastViewModel
-//                            )
-//                        }
+                        composable("forecast") {
+                            ForecastScreen()
+                        }
 
                         composable("settings") {
                             SettingsScreen(
