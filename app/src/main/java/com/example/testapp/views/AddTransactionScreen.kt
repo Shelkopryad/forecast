@@ -79,7 +79,7 @@ fun AddTransactionScreen(
     calendar.time = Date()
 
     val datePickerDialog = DatePickerDialog(
-        context, { _, _, _, dayOfMonth ->
+        context, { _, year, month, dayOfMonth ->
             date = LocalDate.of(year, month + 1, dayOfMonth)
         }, year, month, day
     )

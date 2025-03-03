@@ -97,7 +97,7 @@ fun EditTransactionScreen(
 
     val datePickerDialog = DatePickerDialog(
         context,
-        { _, _, _, dayOfMonth ->
+        { _, year, month, dayOfMonth ->
             date = LocalDate.of(year, month + 1, dayOfMonth).toString()
         }, year, month, day
     )
