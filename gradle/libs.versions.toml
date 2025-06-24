@@ -1,6 +1,8 @@
 [versions]
 agp = "8.8.0"
 charts = "0.2.4-alpha"
+generativeai = "0.9.0"
+generativelanguage = "0.1.0"
 hiltAndroid = "2.48.1"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
@@ -26,6 +28,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 charts = { module = "com.github.tehras:charts", version.ref = "charts" }
+generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
+generativelanguage = { module = "com.google.ai.generativelanguage:generativelanguage", version.ref = "generativelanguage" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -32,7 +32,6 @@ import com.example.testapp.viewModels.MainScreenViewModel
 import com.example.testapp.viewModels.TransactionHistoryViewModel
 import com.example.testapp.views.AddTransactionScreen
 import com.example.testapp.views.EditTransactionScreen
-import com.example.testapp.views.ForecastScreen
 import com.example.testapp.views.MainScreen
 import com.example.testapp.views.SettingsScreen
 import com.example.testapp.views.TransactionHistoryScreen
@@ -70,16 +69,6 @@ class MainActivity : ComponentActivity() {
                                     Icon(
                                         imageVector = Icons.Outlined.Home,
                                         contentDescription = "Home screen"
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        navController.navigate("forecast")
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.DateRange,
-                                        contentDescription = "Forecast"
                                     )
                                 }
                                 IconButton(
@@ -135,10 +124,6 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 transactionDao = transactionDao
                             )
-                        }
-
-                        composable("forecast") {
-                            ForecastScreen()
                         }
 
                         composable("settings") {

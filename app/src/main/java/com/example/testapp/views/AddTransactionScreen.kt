@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +19,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.testapp.R
 import com.example.testapp.dao.CategoryEntity
 import com.example.testapp.dao.TransactionDao
@@ -41,6 +45,7 @@ import com.example.testapp.dao.TransactionEntity
 import com.example.testapp.enums.Categories
 import com.example.testapp.enums.Types
 import com.example.testapp.helpers.appDateFormatter
+import com.example.testapp.previews.FakeTransactionDao
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -71,6 +76,7 @@ fun AddTransactionScreen(
 
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf(LocalDate.now()) }
+    var isExtra by remember { mutableStateOf(false) }
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -185,15 +191,38 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedButton(onClick = {
-            datePickerDialog.show()
-        }) {
-            Text(text = getString(context, R.string.select_date))
+        Row {
+            OutlinedButton(onClick = {
+                datePickerDialog.show()
+            }) {
+                Text(text = getString(context, R.string.select_date))
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "${getString(context, R.string.date)}: ${date.format(appDateFormatter())}",
+                modifier = Modifier.padding(top = 12.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (type == Types.EXPENSE.type) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "${getString(context, R.string.date)}: ${date.format(appDateFormatter())}")
+            Row {
+                Switch(
+                    checked = isExtra,
+                    onCheckedChange = { isExtra = it }
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Text(
+                    text = getString(context, R.string.is_extra),
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -233,7 +262,8 @@ fun AddTransactionScreen(
                             type = type,
                             category = categoryValue,
                             amount = amountDouble,
-                            date = date.format(appDateFormatter())
+                            date = date.format(appDateFormatter()),
+                            isExtra = isExtra
                         )
                     )
                     navController.popBackStack()
@@ -243,4 +273,13 @@ fun AddTransactionScreen(
             Text(text = getString(context, R.string.save))
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun AddTransactionScreenPreview() {
+    val navController = rememberNavController()
+    val transactionDao = FakeTransactionDao()
+    AddTransactionScreen(navController, transactionDao)
 }

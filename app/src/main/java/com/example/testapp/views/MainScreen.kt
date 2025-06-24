@@ -26,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.example.testapp.R
+import com.example.testapp.helpers.appDateFormatter
 import com.example.testapp.helpers.calculateBalance
 import com.example.testapp.helpers.calculateMonthlyExpense
 import com.example.testapp.viewModels.MainScreenViewModel
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -43,7 +45,13 @@ fun MainScreen(
     val showContextMenu = viewModel.showContextMenu.value
     val selectedTransaction = viewModel.selectedTransaction.value
 
-    val lastFiveTransactions = transactions.takeLast(5).reversed()
+    val currentMonthTransactions = transactions.filter {
+        val currentMonth = LocalDate.now().monthValue
+        val currentYear = LocalDate.now().year
+
+        val date = LocalDate.parse(it.date, appDateFormatter())
+        date.monthValue == currentMonth && date.year == currentYear
+    }.reversed()
 
     Column(
         modifier = Modifier
@@ -74,11 +82,14 @@ fun MainScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (lastFiveTransactions.isEmpty()) {
+        if (currentMonthTransactions.isEmpty()) {
             Text(text = getString(context, R.string.no_transactions))
         } else {
-            LazyColumn {
-                items(lastFiveTransactions) { transaction ->
+            LazyColumn(
+                modifier = Modifier
+                    .height(500.dp)
+            ) {
+                items(currentMonthTransactions) { transaction ->
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
@@ -125,7 +136,7 @@ fun MainScreen(
                     .clickable {
                         navController.navigate("transactionsHistory")
                     }
-                    .padding(start = 16.dp),
+                    .padding(start = 16.dp, bottom = 48.dp),
                 style = TextStyle(
                     color = Color.Blue,
                     textDecoration = TextDecoration.Underline

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +19,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -61,6 +63,7 @@ fun EditTransactionScreen(
     var category by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
+    var isExtra by remember { mutableStateOf(false) }
 
     var transaction by remember { mutableStateOf<TransactionEntity?>(null) }
     val categories: MutableState<List<CategoryEntity>> = remember { mutableStateOf(emptyList()) }
@@ -74,6 +77,7 @@ fun EditTransactionScreen(
             category = transaction?.category ?: ""
             amount = transaction?.amount.toString()
             date = transaction?.date ?: ""
+            isExtra = transaction?.isExtra ?: false
 
             transactionDao.getAllCategories().collectLatest {
                 categories.value = it.sortedBy { it.name }
@@ -195,15 +199,38 @@ fun EditTransactionScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedButton(onClick = {
-            datePickerDialog.show()
-        }) {
-            Text(text = getString(context, R.string.select_date))
+        Row {
+            OutlinedButton(onClick = {
+                datePickerDialog.show()
+            }) {
+                Text(text = getString(context, R.string.select_date))
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "${getString(context, R.string.date)}: ${date.format(appDateFormatter())}",
+                modifier = Modifier.padding(top = 12.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (type == Types.EXPENSE.type) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "${getString(context, R.string.date)}: ${date.format(appDateFormatter())}")
+            Row {
+                Switch(
+                    checked = isExtra,
+                    onCheckedChange = { isExtra = it }
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Text(
+                    text = getString(context, R.string.is_extra),
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -244,7 +271,8 @@ fun EditTransactionScreen(
                             type = type,
                             category = categoryValue,
                             amount = amountDouble,
-                            date = date
+                            date = date,
+                            isExtra = isExtra
                         )
                     )
                     navController.popBackStack()

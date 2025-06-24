@@ -141,7 +141,25 @@ fun TransactionHistoryScreen(
 
             Row {
                 Text(
-                    text = " - ${getString(context, R.string.average_monthly_expense)}: ${Math.round(viewModel.averageMonthlyExpense.doubleValue)}",
+                    text = " - W/o extras: ${Math.round(viewModel.monthlyExpenseWoExtras.doubleValue)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Row {
+                Text(
+                    text = " - ${getString(context, R.string.extra_expenses)}: ${Math.round(viewModel.extraExpenses.doubleValue)}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Row {
+                Text(
+                    text = " - ${getString(context, R.string.average_monthly_expense)} wo extras: ${Math.round(viewModel.averageMonthlyExpenseWoExtras.doubleValue)}",
                     style = MaterialTheme.typography.bodyLarge
                 )
 

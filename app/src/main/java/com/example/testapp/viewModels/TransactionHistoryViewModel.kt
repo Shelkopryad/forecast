@@ -31,8 +31,10 @@ class TransactionHistoryViewModel @Inject constructor(
     val monthlySalary = mutableDoubleStateOf(0.0)
     val onlyRent = mutableDoubleStateOf(0.0)
     val monthlyExpenseWoRent = mutableDoubleStateOf(0.0)
+    val monthlyExpenseWoExtras = mutableDoubleStateOf(0.0)
+    val extraExpenses = mutableDoubleStateOf(0.0)
     val monthlyBalance = mutableDoubleStateOf(0.0)
-    val averageMonthlyExpense = mutableDoubleStateOf(0.0)
+    val averageMonthlyExpenseWoExtras = mutableDoubleStateOf(0.0)
 
     @RequiresApi(Build.VERSION_CODES.O)
     val selectedMonth = mutableStateOf(
@@ -124,8 +126,19 @@ class TransactionHistoryViewModel @Inject constructor(
 
                 monthExpensesByCategory.value = expensesByCategory.sortedByDescending { it.second }
                 updateMonthBalance(monthlyTransactions)
-                averageMonthlyExpense.doubleValue =
+                averageMonthlyExpenseWoExtras.doubleValue =
                     calculateAverageMonthlyExpense(transactionEntities)
+                extraExpenses.doubleValue = filterExtras(monthlyTransactions)
+            }
+        }
+    }
+
+    private fun filterExtras(monthlyTransactions: List<TransactionEntity>): Double {
+        return monthlyTransactions.sumOf { transaction ->
+            if (transaction.isExtra) {
+                transaction.amount
+            } else {
+                0.0
             }
         }
     }
@@ -134,16 +147,28 @@ class TransactionHistoryViewModel @Inject constructor(
         val salary = calculateMonthlySalary(monthlyTransactions)
         val expenseWithRent = calculateMonthlyExpense(monthlyTransactions)
         val expenseWoRent = calculateMonthExpensesWithoutRent(monthlyTransactions)
+        val expenseWoExtras = calculateMonthExpensesWithoutExtras(monthlyTransactions)
 
         monthlySalary.doubleValue = salary
         onlyRent.doubleValue = calculateOnlyRent(monthlyTransactions)
         monthlyExpenseWoRent.doubleValue = expenseWoRent
         monthlyBalance.doubleValue = salary - expenseWithRent
+        monthlyExpenseWoExtras.doubleValue = expenseWoExtras
     }
 
     private fun calculateMonthExpensesWithoutRent(transactions: List<TransactionEntity>): Double {
         return transactions.sumOf { transaction ->
             if (transaction.type == Types.EXPENSE.type && transaction.category != Categories.RENT.category) {
+                transaction.amount
+            } else {
+                0.0
+            }
+        }
+    }
+
+    private fun calculateMonthExpensesWithoutExtras(transactions: List<TransactionEntity>): Double {
+        return transactions.sumOf { transaction ->
+            if (transaction.type == Types.EXPENSE.type && transaction.category != Categories.RENT.category && !transaction.isExtra) {
                 transaction.amount
             } else {
                 0.0
@@ -186,7 +211,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
         transactions.filter {
             val date = LocalDate.parse(it.date, appDateFormatter())
-            date.year == LocalDate.now().year && it.type == Types.EXPENSE.type && it.category != Categories.RENT.category
+            date.year == LocalDate.now().year && it.type == Types.EXPENSE.type && it.category != Categories.RENT.category && !it.isExtra
         }.groupBy {
             val date = LocalDate.parse(it.date, appDateFormatter())
             date.month

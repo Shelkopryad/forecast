@@ -20,49 +20,49 @@ class FakeTransactionDao : TransactionDao {
     private val _transactions = MutableStateFlow(
         listOf(
             TransactionEntity(
-                id = 1, amount = 5000.0, type = "income", category = "salary", date = "2025-01-01"
+                id = 1, amount = 5000.0, type = "income", category = "salary", date = "2025-01-01", isExtra = false
             ),
             TransactionEntity(
-                id = 2, amount = 10.0, type = "expense", category = "food", date = "2025-01-02"
+                id = 2, amount = 10.0, type = "expense", category = "food", date = "2025-01-02", isExtra = false
             ),
             TransactionEntity(
-                id = 3, amount = 150.0, type = "expense", category = "pets", date = "2025-01-03"
+                id = 3, amount = 150.0, type = "expense", category = "pets", date = "2025-01-03", isExtra = false
             ),
             TransactionEntity(
-                id = 4, amount = 25.0, type = "expense", category = "food", date = "2025-01-04"
+                id = 4, amount = 25.0, type = "expense", category = "food", date = "2025-01-04", isExtra = false
             ),
             TransactionEntity(
-                id = 5, amount = 87.0, type = "expense", category = "food", date = "2025-01-05"
+                id = 5, amount = 87.0, type = "expense", category = "food", date = "2025-01-05", isExtra = false
             ),
             TransactionEntity(
-                id = 6, amount = 139.0, type = "expense", category = "other", date = "2025-01-06"
+                id = 6, amount = 139.0, type = "expense", category = "other", date = "2025-01-06", isExtra = false
             ),
             TransactionEntity(
-                id = 7, amount = 200.0, type = "expense", category = "entertainment", date = "2025-01-07"
+                id = 7, amount = 200.0, type = "expense", category = "entertainment", date = "2025-01-07", isExtra = false
             ),
             TransactionEntity(
-                id = 8, amount = 5000.0, type = "income", category = "salary", date = "2025-02-01"
+                id = 8, amount = 5000.0, type = "income", category = "salary", date = "2025-02-01", isExtra = false
             ),
             TransactionEntity(
-                id = 9, amount = 10.0, type = "expense", category = "food", date = "2025-02-02"
+                id = 9, amount = 10.0, type = "expense", category = "food", date = "2025-02-02", isExtra = false
             ),
             TransactionEntity(
-                id = 10, amount = 150.0, type = "expense", category = "pets", date = "2025-02-03"
+                id = 10, amount = 150.0, type = "expense", category = "pets", date = "2025-02-03", isExtra = false
             ),
             TransactionEntity(
-                id = 11, amount = 25.0, type = "expense", category = "food", date = "2025-02-04"
+                id = 11, amount = 25.0, type = "expense", category = "food", date = "2025-02-04", isExtra = false
             ),
             TransactionEntity(
-                id = 12, amount = 87.0, type = "expense", category = "food", date = "2025-02-05"
+                id = 12, amount = 87.0, type = "expense", category = "food", date = "2025-02-05", isExtra = false
             ),
             TransactionEntity(
-                id = 13, amount = 139.0, type = "expense", category = "other", date = "2025-02-06"
+                id = 13, amount = 139.0, type = "expense", category = "other", date = "2025-02-06", isExtra = false
             ),
             TransactionEntity(
-                id = 14, amount = 200.0, type = "expense", category = "entertainment", date = "2025-02-07"
+                id = 14, amount = 200.0, type = "expense", category = "entertainment", date = "2025-02-07", isExtra = false
             ),
             TransactionEntity(
-                id = 15, amount = 800.0, type = "expense", category = "rent", date = "2025-02-08"
+                id = 15, amount = 800.0, type = "expense", category = "rent", date = "2025-02-08", isExtra = false
             ),
         )
     )

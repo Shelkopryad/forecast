@@ -10,5 +10,6 @@ data class TransactionEntity(
     @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "category") val category: String,
     @ColumnInfo(name = "amount") val amount: Double,
-    @ColumnInfo(name = "date") val date: String
+    @ColumnInfo(name = "date") val date: String,
+    @ColumnInfo(name = "isExtra", defaultValue = "0") val isExtra: Boolean
 )
