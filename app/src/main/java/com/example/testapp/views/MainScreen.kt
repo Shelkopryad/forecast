@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.example.testapp.R
+import com.example.testapp.enums.Types
 import com.example.testapp.helpers.appDateFormatter
 import com.example.testapp.helpers.calculateBalance
 import com.example.testapp.helpers.calculateMonthlyExpense
@@ -50,7 +51,7 @@ fun MainScreen(
         val currentYear = LocalDate.now().year
 
         val date = LocalDate.parse(it.date, appDateFormatter())
-        date.monthValue == currentMonth && date.year == currentYear
+        date.monthValue == currentMonth && date.year == currentYear && it.type != Types.CORRECTION.type
     }.reversed()
 
     Column(
@@ -127,21 +128,21 @@ fun MainScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = getString(context, R.string.show_more),
-                modifier = Modifier
-                    .clickable {
-                        navController.navigate("transactionsHistory")
-                    }
-                    .padding(start = 16.dp, bottom = 48.dp),
-                style = TextStyle(
-                    color = Color.Blue,
-                    textDecoration = TextDecoration.Underline
-                )
-            )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = getString(context, R.string.show_more),
+            modifier = Modifier
+                .clickable {
+                    navController.navigate("transactionsHistory")
+                }
+                .padding(start = 16.dp, bottom = 48.dp),
+            style = TextStyle(
+                color = Color.Blue,
+                textDecoration = TextDecoration.Underline
+            )
+        )
     }
 }

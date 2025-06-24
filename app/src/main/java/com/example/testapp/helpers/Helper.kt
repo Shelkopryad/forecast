@@ -15,7 +15,7 @@ fun appDateFormatter(): DateTimeFormatter? {
 
 fun calculateBalance(transactions: List<TransactionEntity>): Double {
     return transactions.sumOf {
-        if (it.type == Types.INCOME.type) {
+        if (it.type == Types.INCOME.type || it.type == Types.CORRECTION.type) {
             it.amount
         } else {
             -it.amount

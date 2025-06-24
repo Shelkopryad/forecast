@@ -101,7 +101,7 @@ class TransactionHistoryViewModel @Inject constructor(
 
             val isMonthMatch = selectedMonth.value == transactionMonth
 
-            isMonthMatch && isYearMatch
+            isYearMatch && isMonthMatch && transactionEntity.type != Types.CORRECTION.type
         }
     }
 

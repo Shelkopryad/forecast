@@ -68,7 +68,7 @@ fun AddTransactionScreen(
     var expandedType by remember { mutableStateOf(false) }
 
     val types = listOf(
-        Types.INCOME.type, Types.EXPENSE.type
+        Types.INCOME.type, Types.EXPENSE.type, Types.CORRECTION.type
     )
 
     var category by remember { mutableStateOf("") }
